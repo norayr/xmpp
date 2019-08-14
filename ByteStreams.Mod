@@ -202,7 +202,7 @@ MODULE XmppByteStreams;
 	END ReadBytes;
 	
 	PROCEDURE (rd: Reader) Do;
-	VAR buf: ARRAY 65535 OF BYTE; read, res: LONGINT;
+	VAR buf: ARRAY 65535 OF SHORTINT; read, res: LONGINT;
 	BEGIN
 		IF rd.stream.IsConnected() THEN
 			rd.stream.ReadBytes(buf, 0, LEN(buf), read);
@@ -259,7 +259,7 @@ MODULE XmppByteStreams;
 	END Write;
 	
 	PROCEDURE (a : WriteAction) Do;
-	VAR buf : ARRAY 65535 OF BYTE; lastPos, len, written : LONGINT;
+	VAR buf : ARRAY 65535 OF SHORTINT; lastPos, len, written : LONGINT;
 	BEGIN
 		IF a.owner.stream.IsConnected() THEN
 			IF a.rd.Pos()<a.last THEN

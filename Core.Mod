@@ -342,7 +342,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	
 (** Auth **)	
 	PROCEDURE (a : Auth) Do() : Items.Item;
-	VAR x: Items.Item; i: LONGINT; ds: DS.DynString; u, p: POINTER TO ARRAY OF SHORTCHAR; res: POINTER TO ARRAY OF BYTE;
+	VAR x: Items.Item; i: LONGINT; ds: DS.DynString; u, p: POINTER TO ARRAY OF SHORTCHAR; res: POINTER TO ARRAY OF SHORTINT;
 	BEGIN
 		x:=Items.New(Const.auth);
 		x.SetParam(Const.xmlns, Const.uriSasl); 
