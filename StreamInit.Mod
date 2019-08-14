@@ -112,7 +112,7 @@ MODULE XmppStreamInit;
 	PROCEDURE (oi : OfferIq) Use(item : Items.Item);
 	VAR n, n1, n2, n3, n4 : Items.Item; ok: BOOLEAN; res: INTEGER;
 	BEGIN
-		oi.Set(item.GetParam(Const.to)$, item.GetParam(Const.from)$, item.GetParam(Const.xml_lang)$, item.GetParam(Const.id)$, item.GetParam(Const.type)$);
+		oi.Set(item.GetParam(Const.to)$, item.GetParam(Const.from)$, item.GetParam(Const.xmlLang)$, item.GetParam(Const.id)$, item.GetParam(Const.type)$);
 		item.Find(si, n, res); oi.sid:=n.GetParam(Const.id)$;
 		IF res=0 THEN
 			n.Find(file, n1, res);
@@ -172,7 +172,7 @@ MODULE XmppStreamInit;
 	PROCEDURE (ai : AcceptIq) Use(item : Items.Item);
 	VAR n, n1, n2, n3, n4 : Items.Item; ok: BOOLEAN; res: INTEGER;
 	BEGIN
-		ai.Set(item.GetParam(Const.to)$, item.GetParam(Const.from)$, item.GetParam(Const.xml_lang)$, item.GetParam(Const.id)$, item.GetParam(Const.type)$);
+		ai.Set(item.GetParam(Const.to)$, item.GetParam(Const.from)$, item.GetParam(Const.xmlLang)$, item.GetParam(Const.id)$, item.GetParam(Const.type)$);
 		item.Find(si, n, res);
 		IF res=0 THEN
 			n.Find(feature, n1, res);

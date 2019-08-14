@@ -177,7 +177,7 @@ MODULE XmppDisco;
 	VAR n : Items.Item; 
 	(** to <=> from, type = result **)
 	BEGIN
-		a.Set(data.GetParam(Const.from)$, data.GetParam(Const.to)$, data.GetParam(Const.xml_lang)$, data.GetParam(Const.id)$, Const.result);
+		a.Set(data.GetParam(Const.from)$, data.GetParam(Const.to)$, data.GetParam(Const.xmlLang)$, data.GetParam(Const.id)$, Const.result);
 		n:=data.First();
 		ASSERT(n#NIL); ASSERT(n.GetName()$=query);
 		a.node:=n.GetParam(nodeAttr)$;

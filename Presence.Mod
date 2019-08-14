@@ -86,7 +86,7 @@ MODULE XmppPresence;
 	BEGIN
 		n:=Items.New(Const.iq);
 		n1:=Items.New(Const.session); 
-		n1.SetParam(Const.xmlns, Const.uri_session);
+		n1.SetParam(Const.xmlns, Const.uriSession);
 		n.Add(n1);
 		RETURN n;		
 	END Do;
@@ -99,7 +99,7 @@ MODULE XmppPresence;
 		IF p.from$#'' THEN n.SetParam(Const.from, p.from$); END;
 		IF p.type$#'' THEN n.SetParam(Const.type, p.type$); END;
 		IF p.id$#'' THEN n.SetParam(Const.id, p.id$); END;
-		IF p.lang$#'' THEN n.SetParam(Const.xml_lang, p.lang$); END;
+		IF p.lang$#'' THEN n.SetParam(Const.xmlLang, p.lang$); END;
 		n1:=Items.New(SHOW);
 		IF p.show$#'' THEN n1.SetData(p.show$); n.Add(n1)  END;
 		n1:=Items.New(STATUS);
