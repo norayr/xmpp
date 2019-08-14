@@ -15,7 +15,7 @@ MODULE XmppFiles;
 		String* = ARRAY OF CHAR;
 
 	PROCEDURE GetFileChecksum*(f: Files.File; OUT hash: ARRAY OF CHAR; offset, length: LONGINT);
-		VAR rd: Files.Reader; c: Md5.Context; digest: Md5.Digest; x: BYTE; s: ARRAY 33 OF SHORTCHAR; pos, end: LONGINT;
+		VAR rd: Files.Reader; c: Md5.Context; digest: Md5.Digest; x: SHORTINT; s: ARRAY 33 OF SHORTCHAR; pos, end: LONGINT;
 	BEGIN
 		rd := f.NewReader(NIL); 
 		c := Md5.New();

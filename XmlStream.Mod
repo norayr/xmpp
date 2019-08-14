@@ -77,7 +77,7 @@ MODULE XmppXmlStream;
 			buf : DynString;
 		END;
 		
-		ABYTE = ARRAY 256000 OF BYTE;
+		ASHORTINT = ARRAY 256000 OF SHORTINT;
 		
 	VAR	
 		dir-, stdDir : Directory;
@@ -247,7 +247,7 @@ MODULE XmppXmlStream;
 		stream.Owner().Write;
 	END SendTransmitMsg;
 	
-	PROCEDURE ConvertToByte(str : DynString; VAR x : ABYTE; OUT len : LONGINT);
+	PROCEDURE ConvertToByte(str : DynString; VAR x : ASHORTINT; OUT len : LONGINT);
 	VAR pos : LONGINT; ch : CHAR;
 	BEGIN	(* UTF-8 format *)
 		pos:=0; len:=0;
@@ -267,8 +267,8 @@ MODULE XmppXmlStream;
 		END;
 	END ConvertToByte;
 	
-	PROCEDURE ConvertFromByte(VAR x : ABYTE; str : DynString; len : LONGINT);
-	VAR c1, c2, c3: BYTE; ch : CHAR; pos : LONGINT;
+	PROCEDURE ConvertFromByte(VAR x : ASHORTINT; str : DynString; len : LONGINT);
+	VAR c1, c2, c3: SHORTINT; ch : CHAR; pos : LONGINT;
 	BEGIN
 		ASSERT(str#NIL); 
 		pos:=0; 
@@ -288,7 +288,7 @@ MODULE XmppXmlStream;
 	END ConvertFromByte;
 	
 	PROCEDURE (a : WriteAction) Do;
-		VAR tmp: DynString; buf : ABYTE; len, written, i : LONGINT; 
+		VAR tmp: DynString; buf : ASHORTINT; len, written, i : LONGINT; 
 	BEGIN
 		len:=0; written:=0;
 		IF a.wr.stream.Base()(CommStreams.Stream).IsConnected() THEN
@@ -309,7 +309,7 @@ MODULE XmppXmlStream;
 	END Do;
 	
 	PROCEDURE (a : ReadAction) Do;
-	VAR buf : ABYTE; x : DynString; len, written, read, i : LONGINT; 
+	VAR buf : ASHORTINT; x : DynString; len, written, read, i : LONGINT; 
 	BEGIN
 		read:=0; len:=0;
 		IF a.rd.stream.Base()(CommStreams.Stream).IsConnected() THEN
@@ -432,7 +432,7 @@ MODULE XmppXmlStream;
 	END Do;
 	
 	PROCEDURE (a : RawAction) Do;
-	VAR buf : ABYTE; len, written, i : LONGINT;
+	VAR buf : ASHORTINT; len, written, i : LONGINT;
 	BEGIN
 		IF a.stream.Base()(CommStreams.Stream).IsConnected() THEN
 			ConvertToByte(a.buf, buf, len);
