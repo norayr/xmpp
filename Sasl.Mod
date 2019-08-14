@@ -35,12 +35,12 @@ MODULE XmppSasl;
 	VAR i, res : INTEGER; nm : BOOLEAN; name, val : DynString;
 		PROCEDURE Flush;
 		BEGIN
-			IF name.String()$=Const.sasl_nonce THEN D.nonce:=val.String()$
-			ELSIF name.String()$=Const.sasl_qop THEN D.qop:=val.String()$
-			ELSIF name.String()$=Const.sasl_charset THEN D.charset:=val.String()$
-			ELSIF name.String()$=Const.sasl_algorithm THEN D.algorithm:=val.String()$
-			ELSIF name.String()$=Const.sasl_realm THEN D.realm:=val.String()$
-			ELSIF name.String()$=Const.sasl_rspauth THEN D.rspauth:=val.String()$
+			IF name.String()$=Const.saslNonce THEN D.nonce:=val.String()$
+			ELSIF name.String()$=Const.saslQop THEN D.qop:=val.String()$
+			ELSIF name.String()$=Const.saslCharset THEN D.charset:=val.String()$
+			ELSIF name.String()$=Const.saslAlgorithm THEN D.algorithm:=val.String()$
+			ELSIF name.String()$=Const.saslRealm THEN D.realm:=val.String()$
+			ELSIF name.String()$=Const.saslRspauth THEN D.rspauth:=val.String()$
 			ELSE END;
 			name.Clear; val.Clear; nm:=TRUE;
 		END Flush;
@@ -63,15 +63,15 @@ MODULE XmppSasl;
 	PROCEDURE (VAR D : Data) Make*(VAR s : DynString), NEW;
 	BEGIN
 		s:=DS.Create('');
-		s.AddString(Const.sasl_username+'="'+D.username$+'",');
-		s.AddString(Const.sasl_realm+'="'+D.realm$+'",');
-		 s.AddString(Const.sasl_nonce+'="'+D.nonce$+'",');
-		s.AddString(Const.sasl_cnonce+'="'+D.cnonce$+'",');
-		s.AddString(Const.sasl_nc+'='+D.nc$+',');
-		s.AddString(Const.sasl_digest_uri+'="'+D.digestUri$+'",');
-		s.AddString(Const.sasl_qop+'='+D.qop$+',');
-		s.AddString(Const.sasl_response+'='+D.response$+',');
-		s.AddString(Const.sasl_charset+'='+D.charset$);
+		s.AddString(Const.saslUsername+'="'+D.username$+'",');
+		s.AddString(Const.saslRealm+'="'+D.realm$+'",');
+		 s.AddString(Const.saslNonce+'="'+D.nonce$+'",');
+		s.AddString(Const.saslCnonce+'="'+D.cnonce$+'",');
+		s.AddString(Const.saslNc+'='+D.nc$+',');
+		s.AddString(Const.saslDigestUri+'="'+D.digestUri$+'",');
+		s.AddString(Const.saslQop+'='+D.qop$+',');
+		s.AddString(Const.saslResponse+'='+D.response$+',');
+		s.AddString(Const.saslCharset+'='+D.charset$);
 		(* s.AddChar(0X); *)
 	END Make;
 	

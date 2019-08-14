@@ -248,7 +248,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		
 		IF s.type$#'' THEN x.SetParam(Const.type, s.type$); END;
 		IF s.id$#'' THEN x.SetParam(Const.id, s.id$); END;
-		IF s.lang$#'' THEN x.SetParam(Const.xml_lang, s.lang$); END;
+		IF s.lang$#'' THEN x.SetParam(Const.xmlLang, s.lang$); END;
 		RETURN x;
 	END Data;
 	
@@ -277,7 +277,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 				Strings.Replace(s.from, res, LEN(psrv$), srv);
 			END;
 			s.type:=item.GetParam(Const.type)$;
-			s.lang:=item.GetParam(Const.xml_lang)$;
+			s.lang:=item.GetParam(Const.xmlLang)$;
 			s.id:=item.GetParam(Const.id)$;
 			s.item:=item;
 			s.Use(s.item)
@@ -295,7 +295,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	VAR e : Dom.Element; n, n1, n2, n3 : Dom.Node;
 	BEGIN
 		(* e:=data(Dom.Element);
-		s.Set(e.GetAttribute(Const.to)$, e.GetAttribute(Const.from)$, e.GetAttribute(Const.xml_lang)$, e.GetAttribute(Const.id)$, e.GetAttribute(Const.type)$);
+		s.Set(e.GetAttribute(Const.to)$, e.GetAttribute(Const.from)$, e.GetAttribute(Const.xmlLang)$, e.GetAttribute(Const.id)$, e.GetAttribute(Const.type)$);
 		s.content:=e.firstChild; *)
 	END Use;
 	
@@ -303,9 +303,9 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Do-() : Items.Item;
 	VAR x : Items.Item;
 	BEGIN
-		x:=Items.New(Const.stream_stream);
-		x.SetParam(Const.xmlns, Const.jabber_client);
-		x.SetParam(Const.xmlns_stream, Const.uri_stream);
+		x:=Items.New(Const.streamStream);
+		x.SetParam(Const.xmlns, Const.jabberClient);
+		x.SetParam(Const.xmlnsStream, Const.uriStream);
 		x.SetParam(Const.version, s.version); 
 		RETURN x;
 	END Do;
@@ -331,10 +331,10 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		i:=item.First();
 		s.full:=(i#NIL);
 		WHILE i#NIL DO
-			IF i.GetName()$=Const.stream_features THEN
+			IF i.GetName()$=Const.streamFeatures THEN
 				Features(s, i, 0);
-			ELSIF i.GetName()$=Const.stream_error THEN
-				AddFeature(s.features, Const.stream_error,'',0);
+			ELSIF i.GetName()$=Const.streamError THEN
+				AddFeature(s.features, Const.streamError,'',0);
 			END;
 			i:=item.Next(i);
 		END;
@@ -345,7 +345,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	VAR x: Items.Item; i: INTEGER; ds: DS.DynString; u, p: POINTER TO ARRAY OF SHORTCHAR; res: POINTER TO ARRAY OF BYTE;
 	BEGIN
 		x:=Items.New(Const.auth);
-		x.SetParam(Const.xmlns, Const.uri_sasl); 
+		x.SetParam(Const.xmlns, Const.uriSasl); 
 		x.SetParam(Const.mechanism, a.mechanism);
 		IF a.mechanism$=Const.PLAIN THEN
 			NEW(u, StringsUtf.Utf8Size(a.owner(StdSession).Username()$));
@@ -387,7 +387,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	VAR x : Items.Item; in, out : DynString;
 	BEGIN
 		x:=Items.New(Const.response);
-		x.SetParam(Const.xmlns, Const.uri_sasl);
+		x.SetParam(Const.xmlns, Const.uriSasl);
 		CASE r.step OF
 			sasl1:
 				r.data.Make(in); 
@@ -403,7 +403,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		VAR n, n1, n2 : Items.Item;
 	BEGIN
 		n:=Items.New(Const.iq);
-		n1:=Items.New(Const.bind); n1.SetParam(Const.xmlns,Const.uri_bind);
+		n1:=Items.New(Const.bind); n1.SetParam(Const.xmlns,Const.uriBind);
 		n.Add(n1);
 		IF b.resource$#'' THEN
 			n2:=Items.New(Const.resource);
@@ -434,13 +434,13 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	BEGIN
 		n1:=n.First();
 		WHILE n1#NIL DO
-			IF n1.GetParam(Const.xmlns)$=Const.uri_streams THEN
+			IF n1.GetParam(Const.xmlns)$=Const.uriStreams THEN
 				IF n1.GetName()$=Const.text THEN e.text:=n1.GetData()$
 				ELSE 
 					e.type:=n1.GetName()$; 
 					e.close:=TRUE
 				END;
-			ELSIF n1.GetParam(Const.xmlns)$=Const.uri_stanzas THEN
+			ELSIF n1.GetParam(Const.xmlns)$=Const.uriStanzas THEN
 				IF n1.GetName()$=Const.text THEN e.text:=n1.GetData()$
 				ELSE e.type:='Stanza '+n1.GetName()$+'[' +n.GetParam(Const.error)$+']'; END;
 				e.close:=FALSE; 
@@ -748,11 +748,11 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 					s.BindResource;
 				END;
 			ELSIF s.stream.full THEN
-				IF s.HasFeature(Const.stream_error, '*') THEN NEW(error); error.Init(data); s.Error(error); END; 
+				IF s.HasFeature(Const.streamError, '*') THEN NEW(error); error.Init(data); s.Error(error); END; 
 				IF s.HasFeature('*', Const.PLAIN) & ~(noAuth IN s.opts) & (plain IN s.opts) THEN
 					s.Auth(Const.PLAIN); 
-				ELSIF s.HasFeature('*', Const.DIGEST_MD5) & ~(noAuth IN s.opts) THEN 
-					s.Auth(Const.DIGEST_MD5); 
+				ELSIF s.HasFeature('*', Const.DIGESTMD5) & ~(noAuth IN s.opts) THEN 
+					s.Auth(Const.DIGESTMD5); 
 				END; 
 			END;
 		END TryActivate;
@@ -764,11 +764,11 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 				WITH e : Dom.Element DO 
 					item:=Items.New(''); item.Fill(e);
 					
-					IF item.GetName()$=Const.stream_stream THEN
+					IF item.GetName()$=Const.streamStream THEN
 						NEW(stream); stream.Init(item);
 						s.stream:=stream; 
 						TryActivate;
-					 ELSIF (item.GetName()$=Const.stream_features) & ~s.stream.full THEN (* ??????????? *)
+					 ELSIF (item.GetName()$=Const.streamFeatures) & ~s.stream.full THEN (* ??????????? *)
 						s.stream.features:=Stuff.CreateList();
 						Features(s.stream, item, 0);
 						TryActivate;
@@ -781,7 +781,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 						NEW(fail); fail.Init(item); s.Error(fail);
 					ELSIF (item.GetName()$=Const.iq) OR (item.GetName()$=Const.message) OR (item.GetName()$=Const.presence) THEN
 						s.Fetch(item);
-					ELSIF item.GetName()$=Const.stream_error THEN
+					ELSIF item.GetName()$=Const.streamError THEN
 						NEW(error); error.Init(item); s.Error(error);
 					ELSE END; 
 					In(s, item);
