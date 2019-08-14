@@ -43,14 +43,14 @@ MODULE XmppIbb;
 			to, from : POINTER TO ARRAY OF CHAR;
 			owner : Ibb;
 			id, sid : ARRAY 24 OF CHAR;
-			blockSize : INTEGER;
-			seq : INTEGER;
+			blockSize : LONGINT;
+			seq : LONGINT;
 			buf : DynString;
 			wait : BOOLEAN;
 		END;
 		
 		Reader = POINTER TO RECORD (Rider)
-			len, pos : INTEGER;
+			len, pos : LONGINT;
 			rd : Files.Reader;
 			eof : BOOLEAN;
 		END;
@@ -74,7 +74,7 @@ MODULE XmppIbb;
 		
 	PROCEDURE (h : Hook) Incoming- (ibb : Ibb; sid, from : ARRAY OF CHAR; VAR wr : Files.Writer; VAR verify : BOOLEAN) : BOOLEAN, NEW, ABSTRACT;
 	PROCEDURE (h : Hook) Receiving- (ibb : Ibb; sid, from : ARRAY OF CHAR; file : Files.File; VAR cancel : BOOLEAN), NEW, ABSTRACT;
-	PROCEDURE (h : Hook) Transmitting- (ibb : Ibb; sid, to : ARRAY OF CHAR; pos : INTEGER; VAR cancel : BOOLEAN), NEW, ABSTRACT;
+	PROCEDURE (h : Hook) Transmitting- (ibb : Ibb; sid, to : ARRAY OF CHAR; pos : LONGINT; VAR cancel : BOOLEAN), NEW, ABSTRACT;
 	PROCEDURE (h : Hook) Transmitted- (ibb : Ibb; sid, to : ARRAY OF CHAR), NEW, ABSTRACT;
 	PROCEDURE (h : Hook) Received- (ibb : Ibb; sid, from : ARRAY OF CHAR; file : Files.File), NEW, ABSTRACT;
 	
@@ -93,7 +93,7 @@ MODULE XmppIbb;
 		END;
 	END Receiving;
 	
-	PROCEDURE Transmitting (ibb : Ibb; sid, to : ARRAY OF CHAR; pos : INTEGER; VAR cancel : BOOLEAN);
+	PROCEDURE Transmitting (ibb : Ibb; sid, to : ARRAY OF CHAR; pos : LONGINT; VAR cancel : BOOLEAN);
 	BEGIN
 		IF ibb.hook#NIL THEN
 			ibb.hook.Transmitting(ibb, sid, to, pos, cancel);
@@ -115,7 +115,7 @@ MODULE XmppIbb;
 	END Received;
 	
 	PROCEDURE (r : Reader) Read, NEW;
-	VAR read : INTEGER;
+	VAR read : LONGINT;
 	BEGIN
 		IF ~r.eof THEN
 			Base64.EncodeFile(r.rd, r.blockSize, r.buf, read);
@@ -125,13 +125,13 @@ MODULE XmppIbb;
 	END Read;
 	
 	PROCEDURE (w : Writer) Write, NEW;
-	VAR written : INTEGER;
+	VAR written : LONGINT;
 	BEGIN
 		Base64.DecodeFile(w.buf, w.wr, written);
 	END Write;
 	
 	PROCEDURE FindBySID(ibb : Ibb; sid : ARRAY OF CHAR; VAR s : Rider) : BOOLEAN;
-	VAR i : INTEGER; ok : BOOLEAN;
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		WHILE (i<ibb.list.Length()) & ~ok DO
@@ -143,7 +143,7 @@ MODULE XmppIbb;
 	END FindBySID;
 	
 	PROCEDURE FindByID(ibb : Ibb; id : ARRAY OF CHAR; VAR s : Rider) : BOOLEAN;
-	VAR i : INTEGER; ok : BOOLEAN;
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		WHILE (i<ibb.list.Length()) & ~ok DO
@@ -255,7 +255,7 @@ MODULE XmppIbb;
 	END Do;
 	
 	PROCEDURE (ci : CloseIq) Use(data : Items.Item);
-	VAR n : Items.Item; res : INTEGER; 
+	VAR n : Items.Item; res : LONGINT; 
 	BEGIN
 		ci.this.to:=DS.Create(ci.to).String();
 		ci.this.from:=DS.Create(ci.from).String();
@@ -265,7 +265,7 @@ MODULE XmppIbb;
 		ci.this.sid:=n.GetParam(SID)$;
 	END Use;
 	
-	PROCEDURE (ibb : Ibb) Iq-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (ibb : Ibb) Iq-(data : Items.Item; VAR res : LONGINT);
 	VAR n : Items.Item; oiq : OpenIq; diq : DataIq; ciq : CloseIq; s : Rider; accept, cancel : BOOLEAN;
 	BEGIN
 		n:=data.First();
@@ -339,7 +339,7 @@ MODULE XmppIbb;
 		ibb.owner.Send(oiq);
 	END OpenStream;
 	
-	PROCEDURE (ibb : Ibb) Send*(from, to : ARRAY OF CHAR; rd : Files.Reader; len, blockSize : INTEGER; verify : BOOLEAN; VAR sid : ARRAY OF CHAR), NEW;
+	PROCEDURE (ibb : Ibb) Send*(from, to : ARRAY OF CHAR; rd : Files.Reader; len, blockSize : LONGINT; verify : BOOLEAN; VAR sid : ARRAY OF CHAR), NEW;
 	VAR r : Reader;
 	BEGIN
 		ASSERT(ibb.valid);

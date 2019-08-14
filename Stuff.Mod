@@ -31,12 +31,12 @@ MODULE XmppStuff;
 		l.list.SetItem(l.list.len-1, i);
 	END Add;
 	
-	PROCEDURE (l : List) Length*() : INTEGER, NEW;
+	PROCEDURE (l : List) Length*() : LONGINT, NEW;
 	BEGIN
 		RETURN l.list.len;
 	END Length;
 
-	PROCEDURE (l : List) Item*(idx : INTEGER) : ANYPTR, NEW;
+	PROCEDURE (l : List) Item*(idx : LONGINT) : ANYPTR, NEW;
 	VAR i : ANYPTR;
 	BEGIN
 		ASSERT((idx>=0) & (idx<l.list.len));
@@ -46,7 +46,7 @@ MODULE XmppStuff;
 	END Item;
 
 	PROCEDURE (l : List) Remove*(item : ANYPTR), NEW;
-	VAR i : INTEGER; ok : BOOLEAN;
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		WHILE (i<l.list.len) & ~ok DO

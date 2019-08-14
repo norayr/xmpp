@@ -55,7 +55,7 @@ MODULE XmppSession;
 			pi-: Pi.Pinger;
 			alive: AliveAction;
 			connected, testOnly: BOOLEAN;
-			connectPos: INTEGER;
+			connectPos: LONGINT;
 			streams: Map.StrMap;
 		END;
 			
@@ -70,7 +70,7 @@ MODULE XmppSession;
 		AliveAction = POINTER TO RECORD (Actions.Action) 
 			s: Core.Session;
 			last: Ping;
-			res: INTEGER;
+			res: LONGINT;
 		END;
 		
 		DisconnectAction = POINTER TO RECORD (Actions.Action) 
@@ -98,7 +98,7 @@ MODULE XmppSession;
 		
 		Msg* = ABSTRACT RECORD (Bus.Message) 
 			owner: Session;
-			res: INTEGER;
+			res: LONGINT;
 			to, from: ARRAY 256 OF CHAR;
 		END;
 		
@@ -117,7 +117,7 @@ MODULE XmppSession;
 		END;
 		
 		ConnectingMsg* = LIMITED RECORD (Msg) 
-			pos-, len-: INTEGER;
+			pos-, len-: LONGINT;
 			op-: ARRAY 256 OF CHAR;
 		END;
 		
@@ -161,7 +161,7 @@ MODULE XmppSession;
 		
 		RosterMsg* = LIMITED RECORD (Msg)
 			list-: RosterList;
-			length-: INTEGER;
+			length-: LONGINT;
 		END;
 		
 		RosterAddMsg* = RECORD (Msg)
@@ -175,7 +175,7 @@ MODULE XmppSession;
 		
 		RosterResMsg* = LIMITED RECORD (Msg)
 			jid-: ARRAY 512 OF CHAR;
-			result-: INTEGER;
+			result-: LONGINT;
 		END;
 		
 		SubscribedMsg* = LIMITED RECORD (Msg) 
@@ -186,14 +186,14 @@ MODULE XmppSession;
 			file*: Files.File;
 			name*, descr*, date*: ARRAY 256 OF CHAR;
 			range*: BOOLEAN;
-			offset*, length*: INTEGER;
+			offset*, length*: LONGINT;
 			sid*: StreamId;
 			methods*: SET;
 		END;
 		
 		IncomingFileMsg* = LIMITED RECORD(Msg)
 			name-, descr-: ARRAY 256 OF CHAR;
-			length-: INTEGER;
+			length-: LONGINT;
 			methods-: SET;
 			id-: StreamId;
 		END;
@@ -201,7 +201,7 @@ MODULE XmppSession;
 		AcceptFileMsg* = RECORD(Msg)
 			file*: Files.File;
 			id*: StreamId;
-			method*: INTEGER;
+			method*: LONGINT;
 		END;
 		
 		AcceptedFileMsg* = LIMITED RECORD(Msg)
@@ -225,7 +225,7 @@ MODULE XmppSession;
 		PresenceMsg* = RECORD(Msg)
 			type*: ARRAY 127 OF CHAR;
 			show*, status*: ARRAY 1024 OF CHAR;
-			priority*: INTEGER;
+			priority*: LONGINT;
 		END;
 		
 		PresenceOpts* = Pr.Opts;
@@ -233,19 +233,19 @@ MODULE XmppSession;
 		PresenceInfoMsg* = LIMITED RECORD(Msg)
 			type-: ARRAY 127 OF CHAR;
 			show-, status-: ARRAY 1024 OF CHAR;
-			priority-: INTEGER;
+			priority-: LONGINT;
 			opts-: PresenceOpts;
 		END;
 		
 		BusResultMsg* = LIMITED RECORD(Msg)
 			id-: ARRAY 33 OF CHAR;
-			code-: INTEGER;
+			code-: LONGINT;
 		END;
 		
 	VAR
 		dir-: Directory;
 	
-	PROCEDURE (VAR m: Msg) MetaInf*(OUT to, from: ARRAY OF CHAR; OUT owner: Session; OUT res: INTEGER), NEW;
+	PROCEDURE (VAR m: Msg) MetaInf*(OUT to, from: ARRAY OF CHAR; OUT owner: Session; OUT res: LONGINT), NEW;
 	BEGIN
 		to:=m.to$;
 		from:=m.from$;
@@ -277,7 +277,7 @@ MODULE XmppSession;
 	END Jid;
 	
 	PROCEDURE (d: Directory) Broadcast(s: Session; VAR msg: AbfBus.Message), NEW;
-	VAR res: INTEGER;
+	VAR res: LONGINT;
 	BEGIN
 		WITH msg: Msg DO 
 			msg.owner:=s;
@@ -341,7 +341,7 @@ MODULE XmppSession;
 	END Error;
 	
 	PROCEDURE (a: DsAction) Result;
-	VAR i: INTEGER;
+	VAR i: LONGINT;
 	BEGIN
 		Log.String('Disco ');
 		IF a.type=Ds.info THEN
@@ -367,7 +367,7 @@ MODULE XmppSession;
 		IF a=dir.This(a.s).alive.last THEN dir.This(a.s).alive.res:=error ELSE Log.Ln; Log.String('ping late'); END;
 	END Error;
 	
-	PROCEDURE (h: DsHook) Request(from: ARRAY OF CHAR; type: INTEGER; VAR query: Ds.Query);
+	PROCEDURE (h: DsHook) Request(from: ARRAY OF CHAR; type: LONGINT; VAR query: Ds.Query);
 	BEGIN
 		query.AddFeature('http://jabber.org/protocol/si');
 		query.AddFeature('http://jabber.org/protocol/si/profile/file-transfer');
@@ -377,7 +377,7 @@ MODULE XmppSession;
 	END Request;
 	
 	PROCEDURE (a: RsAction) Result;
-	VAR i: INTEGER; rm: RosterMsg; ri: RosterItem;
+	VAR i: LONGINT; rm: RosterMsg; ri: RosterItem;
 	BEGIN
 		i:=0; rm.list:=Linear.NewList(); 
 		IF a.items#NIL THEN rm.list.SetLength(a.items.Length()) END;
@@ -416,7 +416,7 @@ MODULE XmppSession;
 		dir.Broadcast(dir.This(a.owner.owner), rm);
 	END Error;
 	
-	PROCEDURE (h: PrHook) Notify(p: Pr.Presence; type, from, show, status: ARRAY OF CHAR; priority: INTEGER; opts: Pr.Opts);
+	PROCEDURE (h: PrHook) Notify(p: Pr.Presence; type, from, show, status: ARRAY OF CHAR; priority: LONGINT; opts: Pr.Opts);
 		VAR str: ARRAY 16 OF CHAR; pm: PresenceInfoMsg; sm: SubscribedMsg;
 	BEGIN
 		IF type=Pr.SUBSCRIBE THEN 
@@ -441,7 +441,7 @@ MODULE XmppSession;
 	END Notify;
 	
 	PROCEDURE (h: RsHook) Push(r: Rs.Roster; item: Rs.Item);
-	VAR i: INTEGER; from: ARRAY 1024 OF CHAR;
+	VAR i: LONGINT; from: ARRAY 1024 OF CHAR;
 	BEGIN
 		
 	END Push;
@@ -497,7 +497,7 @@ MODULE XmppSession;
 		END;
 	END Received;
 	
-	PROCEDURE (h: IbbHook) Transmitting (ibb: Ibb.Ibb; sid, to: ARRAY OF CHAR; pos: INTEGER; VAR stop: BOOLEAN);
+	PROCEDURE (h: IbbHook) Transmitting (ibb: Ibb.Ibb; sid, to: ARRAY OF CHAR; pos: LONGINT; VAR stop: BOOLEAN);
 	BEGIN
 		stop:=FALSE;
 	END Transmitting;
@@ -521,12 +521,12 @@ MODULE XmppSession;
 	
 	END NewStream;
 	
-	PROCEDURE (h: BsHook) Connect(bs: Bs.ByteStreams; host: Bs.Host; OUT s: Cs.Stream; OUT res: INTEGER);
+	PROCEDURE (h: BsHook) Connect(bs: Bs.ByteStreams; host: Bs.Host; OUT s: Cs.Stream; OUT res: LONGINT);
 	BEGIN
 	
 	END Connect;
 	
-	PROCEDURE (h: BsHook) Bind(bs: Bs.ByteStreams; host: Bs.Host; VAR l: Cs.Listener; OUT res: INTEGER);
+	PROCEDURE (h: BsHook) Bind(bs: Bs.ByteStreams; host: Bs.Host; VAR l: Cs.Listener; OUT res: LONGINT);
 	VAR proxyType, proxyAdr, proxyPort, protocol, adr, lAdr: ARRAY 128 OF CHAR;
 	BEGIN
 		(* IF Cfg.dir.ProxyEnabled() THEN
@@ -553,7 +553,7 @@ MODULE XmppSession;
 		dir.Broadcast(dir.This(b.owner), rm);
 	END Ok;
 
-	PROCEDURE (h: BusHook) Error(b: Bus.Bus; IN from, id: ARRAY OF CHAR; code: INTEGER);
+	PROCEDURE (h: BusHook) Error(b: Bus.Bus; IN from, id: ARRAY OF CHAR; code: LONGINT);
 		VAR rm: BusResultMsg;
 	BEGIN
 		rm.code:=code; rm.id:=id$; rm.from:=from$; rm.owner:=dir.This(b.owner); rm.to:=dir.Jid(dir.This(b.owner))$;
@@ -581,7 +581,7 @@ MODULE XmppSession;
 		ELSE END;
 	END Ready;
 	
-	PROCEDURE (h: SiHook) Accepted(si: Si.StreamInit; by: ARRAY OF CHAR; a: Si.Action; method: INTEGER);
+	PROCEDURE (h: SiHook) Accepted(si: Si.StreamInit; by: ARRAY OF CHAR; a: Si.Action; method: LONGINT);
 	VAR m: AcceptedFileMsg; from, sid: ARRAY 256 OF CHAR; s: Session; rd: Files.Reader; 
 	BEGIN
 		s:=dir.This(si.owner);
@@ -615,7 +615,7 @@ MODULE XmppSession;
 		os:='Ominc BBCB Runtime Environment';
 	END Request;
 	
-	PROCEDURE OfferFile(s: Session; file: Files.File; to, from, name, descr, date: ARRAY OF CHAR; range: BOOLEAN; offset, length: INTEGER; methods: SET; OUT sid: StreamId);
+	PROCEDURE OfferFile(s: Session; file: Files.File; to, from, name, descr, date: ARRAY OF CHAR; range: BOOLEAN; offset, length: LONGINT; methods: SET; OUT sid: StreamId);
 	VAR hash: ARRAY 33 OF CHAR;
 	BEGIN
 		NEW(sid); sid.file:=file;
@@ -645,8 +645,8 @@ MODULE XmppSession;
 		dir.Broadcast(s, msg);
 	END TimeOut;
 	
-	PROCEDURE (a: AliveAction) Do(VAR after: LONGINT; VAR stop: BOOLEAN; OUT data: ANYPTR);
-		VAR res: INTEGER; s: Session;
+	PROCEDURE (a: AliveAction) Do(VAR after: HUGEINT; VAR stop: BOOLEAN; OUT data: ANYPTR);
+		VAR res: LONGINT; s: Session;
 	BEGIN
 		s:=dir.This(a.s);
 		IF (s#NIL) & (a.s#NIL) & a.s.Authorized()&(s.pr#NIL) THEN
@@ -685,8 +685,8 @@ MODULE XmppSession;
 		Actions.Start(s.alive, timeout, FALSE);
 	END StartAliveAction;	
 	
-	PROCEDURE (a: ConnectAction) Do(VAR after: LONGINT; VAR stop: BOOLEAN; OUT data: ANYPTR);
-	VAR res: INTEGER; ph: PrHook; mh: MsHook; ibh: IbbHook; bsh: BsHook; rh: RsHook; dh: DsHook; bh: BusHook; sih: SiHook; vh: VerHook;
+	PROCEDURE (a: ConnectAction) Do(VAR after: HUGEINT; VAR stop: BOOLEAN; OUT data: ANYPTR);
+	VAR res: LONGINT; ph: PrHook; mh: MsHook; ibh: IbbHook; bsh: BsHook; rh: RsHook; dh: DsHook; bh: BusHook; sih: SiHook; vh: VerHook;
 	BEGIN
 		IF ~a.s.s.Authorized()&(a.s.pr=NIL) THEN
 			a.s.s.StartStream;
@@ -739,8 +739,8 @@ MODULE XmppSession;
 	
 	END Start;
 	
-	PROCEDURE (a: DisconnectAction) Do(VAR after: LONGINT; VAR stop: BOOLEAN; OUT data: ANYPTR);
-	VAR res: INTEGER; 
+	PROCEDURE (a: DisconnectAction) Do(VAR after: HUGEINT; VAR stop: BOOLEAN; OUT data: ANYPTR);
+	VAR res: LONGINT; 
 	BEGIN
 		IF a.s.s.Authorized()&(a.s.pr#NIL) THEN
 			Core.dir.Stop(a.s.s);
@@ -764,7 +764,7 @@ MODULE XmppSession;
 	END Start;	
 	
 	PROCEDURE Stop*(s: Session);
-	VAR da: DisconnectAction; res: INTEGER; 
+	VAR da: DisconnectAction; res: LONGINT; 
 	BEGIN	
 		NEW(da); da.s:=s;
 		s.pr.Unavailable;
@@ -777,7 +777,7 @@ MODULE XmppSession;
 		Actions.Start(da, 200, TRUE);
 	END Stop;
 
-	PROCEDURE Start*(s: Session; OUT res: INTEGER);
+	PROCEDURE Start*(s: Session; OUT res: LONGINT);
 	VAR ca: ConnectAction; 
 	BEGIN
 		Core.dir.Start(s.s, res);
@@ -802,7 +802,7 @@ MODULE XmppSession;
 		ASSERT(s.s#NIL, 102);
 	END New;
 	
-	PROCEDURE Send* (s: Session; VAR msg: Msg; OUT res: INTEGER);
+	PROCEDURE Send* (s: Session; VAR msg: Msg; OUT res: LONGINT);
 	VAR ra: RsAction; aa: RsAddAction;
 	BEGIN
 		ASSERT(s#NIL, 20);
@@ -816,7 +816,7 @@ MODULE XmppSession;
 		ELSE res:=-2 END;	
 	END Send;
 	
-	PROCEDURE SendTo* (s: Session; IN to: ARRAY OF CHAR; VAR msg: Bus.Message; OUT res: INTEGER);
+	PROCEDURE SendTo* (s: Session; IN to: ARRAY OF CHAR; VAR msg: Bus.Message; OUT res: LONGINT);
 		VAR from, id: ARRAY 256 OF CHAR; a: RecAction;
 	BEGIN
 		from:=s.s.Username()$+'@'+s.s.Server()$+'/'+s.s.Resource()$;
@@ -851,7 +851,7 @@ MODULE XmppSession;
 		ELSE END;
 	END HandleBusMsg;
 	
-	PROCEDURE GetDataLength*(s: Session; OUT in, out: LONGINT);
+	PROCEDURE GetDataLength*(s: Session; OUT in, out: HUGEINT);
 	BEGIN
 		IF s#NIL THEN Core.GetDataLength(s.s, in, out) END;
 	END GetDataLength;

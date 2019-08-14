@@ -17,9 +17,9 @@ MODULE XmppObxBus;
 			dlg* : RECORD
 			user*, server*, pwd*, res*, remoteAdr*, to* : Dialog.String;
 			END;
-			x* : INTEGER; y* : REAL; z* : SET; u* : BOOLEAN;
-			v* : ARRAY 4 OF ARRAY 3 OF ARRAY 4 OF RECORD x* :INTEGER; y* : REAL END;
-			d* : LONGINT;
+			x* : LONGINT; y* : REAL; z* : SET; u* : BOOLEAN;
+			v* : ARRAY 4 OF ARRAY 3 OF ARRAY 4 OF RECORD x* :LONGINT; y* : REAL END;
+			d* : HUGEINT;
 			j* : CHAR;
 		END;
 	
@@ -32,7 +32,7 @@ MODULE XmppObxBus;
 		END;
 	
 	PROCEDURE Do*;
-	VAR m : Msg; i, j, z, res : INTEGER;
+	VAR m : Msg; i, j, z, res : LONGINT;
 	BEGIN
 		NEW(m);
 		m.dlg.user:='akapetryxa';
@@ -64,7 +64,7 @@ MODULE XmppObxBus;
 	END Disconnect;
 		
 	PROCEDURE Connect*;
-		VAR res : INTEGER;
+		VAR res : LONGINT;
 	BEGIN
 		Cmds.NewSession(dlg.user, dlg.pwd, dlg.server, dlg.res, dlg.remoteAdr, rec.s, res);
 		ASSERT(res=0, 100);

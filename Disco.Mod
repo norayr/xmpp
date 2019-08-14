@@ -34,7 +34,7 @@ MODULE XmppDisco;
 		Action* = POINTER TO ABSTRACT RECORD 
 			id- : ARRAY 15 OF CHAR;
 			identities-, features-, items- : Stuff.List;
-			type- : INTEGER;
+			type- : LONGINT;
 		END;
 		
 		Hook* = POINTER TO ABSTRACT RECORD END;
@@ -84,7 +84,7 @@ MODULE XmppDisco;
 	
 	PROCEDURE (a : Action) Result*, NEW, ABSTRACT;
 	PROCEDURE (a : Action) Error*, NEW, ABSTRACT;
-	PROCEDURE (h : Hook) Request*(from : ARRAY OF CHAR; type : INTEGER; VAR query : Query), NEW, ABSTRACT;
+	PROCEDURE (h : Hook) Request*(from : ARRAY OF CHAR; type : LONGINT; VAR query : Query), NEW, ABSTRACT;
 	
 	PROCEDURE NewFeature(e : Items.Item) : Feature;
 	VAR f : Feature;
@@ -140,7 +140,7 @@ MODULE XmppDisco;
 	END Use;
 	
 	PROCEDURE (a : AnswerIq) Do() : Items.Item;
-	VAR n, n1, n2 : Items.Item; i : INTEGER;
+	VAR n, n1, n2 : Items.Item; i : LONGINT;
 	BEGIN
 		n:=Items.New(Const.iq);
 		n1:=Items.New(query); n1.SetParam(Const.xmlns, a.urn);
@@ -194,7 +194,7 @@ MODULE XmppDisco;
 	END Add;	
 	
 	PROCEDURE (q: Queue) Find(id : ARRAY OF CHAR): Action, NEW; 
-	VAR i : INTEGER; ok : BOOLEAN;
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		WHILE (i<q.list.Length()) & ~ok DO
@@ -258,7 +258,7 @@ MODULE XmppDisco;
 	END AddItem;
 	
 	PROCEDURE HandleGet(ds: Disco; aiq : AnswerIq);
-	VAR type : INTEGER; q : Query;
+	VAR type : LONGINT; q : Query;
 	BEGIN
 		IF ds.hook#NIL THEN
 			IF aiq.urn=urn_disco_info THEN type:=info 
@@ -268,7 +268,7 @@ MODULE XmppDisco;
 		ELSE END;
 	END HandleGet;
 	
-	PROCEDURE (ds: Disco) Query* (from, to : ARRAY OF CHAR; type : INTEGER; node : ARRAY OF CHAR; action : Action), NEW;
+	PROCEDURE (ds: Disco) Query* (from, to : ARRAY OF CHAR; type : LONGINT; node : ARRAY OF CHAR; action : Action), NEW;
 	VAR qiq : QueryIq;
 	BEGIN
 		ASSERT(action#NIL, 20);
@@ -286,7 +286,7 @@ MODULE XmppDisco;
 		ds.owner.Send(qiq);
 	END Query;	
 	
-	PROCEDURE (ds : Disco) Iq-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (ds : Disco) Iq-(data : Items.Item; VAR res : LONGINT);
 	VAR n : Items.Item; qiq : QueryIq; aiq : AnswerIq;
 	BEGIN
 		IF (data.First()#NIL) THEN

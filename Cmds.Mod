@@ -66,7 +66,7 @@ MODULE XmppCmds;
 		ASSERT(opts#{}, 23);
 	END Subscribe; *)
 	
-	PROCEDURE NewSession*(user, password, server, resource, remoteAdr : ARRAY OF CHAR; OUT s : XmppSession.Session; OUT res : INTEGER);
+	PROCEDURE NewSession*(user, password, server, resource, remoteAdr : ARRAY OF CHAR; OUT s : XmppSession.Session; OUT res : LONGINT);
 	VAR adr, lAdr, rAdr, protocol : ARRAY 256 OF CHAR;
 	BEGIN
 		IF server$=remoteAdr$ THEN
@@ -85,7 +85,7 @@ MODULE XmppCmds;
 		IF res=0 THEN XmppSession.New(protocol, lAdr, adr, user, password, server, resource, s) END;
 	END NewSession;
 	
-	PROCEDURE StartSession*(s: XmppSession.Session; OUT res: INTEGER);
+	PROCEDURE StartSession*(s: XmppSession.Session; OUT res: LONGINT);
 	BEGIN
 		ASSERT(s#NIL, 20);
 		XmppSession.Start(s, res); 
@@ -98,7 +98,7 @@ MODULE XmppCmds;
 	END StopSession;
 	
 	PROCEDURE Register*(remoteAdr, username, server, password, proxyType, proxyAdr, proxyPort, proxyUser, proxyPwd : ARRAY OF CHAR; regHook : RegHook);
-	VAR adr, lAdr, rAdr, protocol : ARRAY 512 OF CHAR; res : INTEGER; 
+	VAR adr, lAdr, rAdr, protocol : ARRAY 512 OF CHAR; res : LONGINT; 
 	BEGIN
 		ASSERT(regHook#NIL, 20);
 		IF server$=remoteAdr$ THEN

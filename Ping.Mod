@@ -70,7 +70,7 @@ MODULE XmppPing;
 	END Pong;
 	
 	PROCEDURE Error(p: Pinger; IN from, id: ARRAY OF CHAR);
-		VAR em: PingErrorMsg; res: INTEGER;
+		VAR em: PingErrorMsg; res: LONGINT;
 	BEGIN
 		IF p.map.Item(id)#NIL THEN
 			em.p:=p; em.from:=from$; em.data:=p.map.Item(id)(Action).data;
@@ -80,7 +80,7 @@ MODULE XmppPing;
 	END Error;	
 	
 	PROCEDURE Ping(p: Pinger; IN from, to, id: ARRAY OF CHAR);
-		VAR pm: PingAnswerMsg; res: INTEGER;
+		VAR pm: PingAnswerMsg; res: LONGINT;
 	BEGIN
 		IF p.map.Item(id)#NIL THEN
 			pm.p:=p; pm.from:=from$; pm.to:=to$; pm.data:=p.map.Item(id)(Action).data;
@@ -100,7 +100,7 @@ MODULE XmppPing;
 		p.map.Add(a.id, a);
 	END DoPing;
 	
-	PROCEDURE (p: Pinger) Iq-(data : It.Item; VAR res : INTEGER);
+	PROCEDURE (p: Pinger) Iq-(data : It.Item; VAR res : LONGINT);
 		VAR n: It.Item; piq: PingIq; error: BOOLEAN; a: ANYPTR;
 	BEGIN
 		n:=data.First();
@@ -143,7 +143,7 @@ MODULE XmppPing;
 	END Create;
 	
 	PROCEDURE HandleBusMsg* (VAR msg: Bus.Message);
-	VAR name: ARRAY 127 OF CHAR; res: INTEGER; a: Action;
+	VAR name: ARRAY 127 OF CHAR; res: LONGINT; a: Action;
 	BEGIN	
 		WITH 
 			|msg: PingRequestMsg DO 

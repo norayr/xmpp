@@ -9,7 +9,7 @@ MODULE XmppBasic;
 		user*, password*, remoteAdr* : Dialog.String;
 	
 	PROCEDURE (a : Action) Do;
-	VAR res : INTEGER;
+	VAR res : LONGINT;
 	BEGIN
 		IF ~s.Authorized() THEN	
 			s.StartStream;

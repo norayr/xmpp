@@ -19,10 +19,10 @@ MODULE XmppStdBus;
 	VAR
 		strval: RECORD(Meta.Value) p*: POINTER TO ARRAY OF CHAR END; 
 		sstrval: RECORD(Meta.Value) p*: POINTER TO ARRAY OF SHORTCHAR END;
-		ival: RECORD(Meta.Value) p*: POINTER TO ARRAY OF INTEGER END; 
-		lival: RECORD(Meta.Value) p*: POINTER TO ARRAY OF LONGINT END; 
+		ival: RECORD(Meta.Value) p*: POINTER TO ARRAY OF LONGINT END; 
+		lival: RECORD(Meta.Value) p*: POINTER TO ARRAY OF HUGEINT END; 
 		bval: RECORD(Meta.Value) p*: POINTER TO ARRAY OF BYTE END; 
-		sival: RECORD(Meta.Value) p*: POINTER TO ARRAY OF SHORTINT END; 
+		sival: RECORD(Meta.Value) p*: POINTER TO ARRAY OF INTEGER END; 
 		rval: RECORD(Meta.Value) p*: POINTER TO ARRAY OF REAL END; 
 		srval: RECORD(Meta.Value) p*: POINTER TO ARRAY OF SHORTREAL END; 
 		sval: RECORD(Meta.Value) p*: POINTER TO ARRAY OF SET END; 
@@ -44,7 +44,7 @@ MODULE XmppStdBus;
 	END LookupItem;	
 	
 	PROCEDURE GetTypeFp(VAR x : ANYREC; OUT fprint : ARRAY OF CHAR);
-	VAR mod, name : ARRAY 127 OF CHAR; res : INTEGER; m : Kernel.Module; type : Kernel.Type;
+	VAR mod, name : ARRAY 127 OF CHAR; res : LONGINT; m : Kernel.Module; type : Kernel.Type;
 	BEGIN
 		(* Strings.Find(type, '.', 0, res);
 		Strings.Extract(type, 0, res, mod); Strings.Extract(type, res+1, LEN(type$), name);
@@ -56,7 +56,7 @@ MODULE XmppStdBus;
 	END GetTypeFp;
 		
 	PROCEDURE (c : StdConv) MsgToItem(VAR msg : Bus.Message; OUT x : Items.Item);
-	VAR name, summ : ARRAY 127 OF CHAR; y: Items.Item; item : Meta.Item;  hash : Md5.Hash; i : INTEGER; fnum, str : ARRAY 127 OF CHAR;
+	VAR name, summ : ARRAY 127 OF CHAR; y: Items.Item; item : Meta.Item;  hash : Md5.Hash; i : LONGINT; fnum, str : ARRAY 127 OF CHAR;
 		
 			PROCEDURE Inc(OUT s : ARRAY OF CHAR);
 			BEGIN
@@ -66,7 +66,7 @@ MODULE XmppStdBus;
 			END Inc;
 		
 			PROCEDURE Scan(root : Items.Item; x : Meta.Item);
-			VAR rec, arr : Items.Item; y : Meta.Item; sc : Meta.Scanner; i, j : INTEGER; ds : DynString; ch : CHAR; mod, name: Meta.Name;
+			VAR rec, arr : Items.Item; y : Meta.Item; sc : Meta.Scanner; i, j : LONGINT; ds : DynString; ch : CHAR; mod, name: Meta.Name;
 			BEGIN
 				ds:=DS.Create('');
 				IF x.vis=Meta.exported THEN
@@ -198,8 +198,8 @@ MODULE XmppStdBus;
 		END;
 	END MsgToItem;
 	
-	PROCEDURE (c : StdConv) ItemToMsg(item : Items.Item; VAR msg : Bus.MsgPtr; res : INTEGER);
-	VAR name, summ : ARRAY 127 OF CHAR; this : Meta.Item; x : ANYPTR; hash : Md5.Hash; i : INTEGER; fnum, fp : ARRAY 127 OF CHAR; al : Bus.Alien; sp : Bus.Special;
+	PROCEDURE (c : StdConv) ItemToMsg(item : Items.Item; VAR msg : Bus.MsgPtr; res : LONGINT);
+	VAR name, summ : ARRAY 127 OF CHAR; this : Meta.Item; x : ANYPTR; hash : Md5.Hash; i : LONGINT; fnum, fp : ARRAY 127 OF CHAR; al : Bus.Alien; sp : Bus.Special;
 		
 			PROCEDURE Inc(OUT s : ARRAY OF CHAR);
 			BEGIN
@@ -209,7 +209,7 @@ MODULE XmppStdBus;
 			END Inc;
 			
 			PROCEDURE Prepare(root: Items.Item; VAR ptr, base: Meta.Item);
-				VAR len: INTEGER; ok: BOOLEAN;
+				VAR len: LONGINT; ok: BOOLEAN;
 			BEGIN
 				IF (root#NIL) & (root.GetData()#NIL) THEN len:=LEN(root.GetData()$) ELSE len:=1 END;
 				CASE base.typ OF
@@ -273,7 +273,7 @@ MODULE XmppStdBus;
 			END Prepare;
 			 	
 			PROCEDURE Scan(root : Items.Item; x : Meta.Item);
-				VAR this: Items.Item; y, z : Meta.Item; sc : Meta.Scanner; i, j, typ, res, idx : INTEGER; l : LONGINT; r : REAL; ds: DS.DynString; s0: POINTER TO ARRAY OF CHAR; bool : BOOLEAN; str, str2 : ARRAY 127 OF CHAR; s: SET;  mod, name: Meta.Name;
+				VAR this: Items.Item; y, z : Meta.Item; sc : Meta.Scanner; i, j, typ, res, idx : LONGINT; l : HUGEINT; r : REAL; ds: DS.DynString; s0: POINTER TO ARRAY OF CHAR; bool : BOOLEAN; str, str2 : ARRAY 127 OF CHAR; s: SET;  mod, name: Meta.Name;
 						
 			BEGIN
 				IF x.vis=Meta.exported THEN

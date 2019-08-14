@@ -27,7 +27,7 @@ MODULE XmppRegister;
 		IBReg* = POINTER TO LIMITED RECORD (Core.Extension)
 			valid-: BOOLEAN;
 			hook: Hook;
-			step: INTEGER;
+			step: LONGINT;
 			lastId: ARRAY 17 OF CHAR
 		END;
 
@@ -38,7 +38,7 @@ MODULE XmppRegister;
 		RegisterHook* = POINTER TO ABSTRACT RECORD END;
 
 		StartAction = POINTER TO RECORD(Services.Action) END;
-		ContinueAction = POINTER TO RECORD(Services.Action) fails: INTEGER END;
+		ContinueAction = POINTER TO RECORD(Services.Action) fails: LONGINT END;
 
 		Field* = POINTER TO LIMITED RECORD
 			name-, value*: ARRAY 256 OF CHAR
@@ -76,7 +76,7 @@ MODULE XmppRegister;
 	PROCEDURE (q: QueryIq) Use (data: Items.Item), EMPTY;
 
 	PROCEDURE (a: AnswerIq) Do (): Items.Item;
-		VAR n, n1, n2, n3: Items.Item; i: INTEGER;
+		VAR n, n1, n2, n3: Items.Item; i: LONGINT;
 	BEGIN
 		n := Items.New(Const.iq);
 		n1 := Items.New(QUERY); n1.SetParam(Const.xmlns, URI_REGISTER);
@@ -111,7 +111,7 @@ MODULE XmppRegister;
 	END Use;
 
 	PROCEDURE InitFields (ibr: IBReg; aiq: AnswerIq);
-		VAR ok: BOOLEAN; i: INTEGER;
+		VAR ok: BOOLEAN; i: LONGINT;
 	BEGIN
 		ASSERT(ibr.hook # NIL, 20);
 		ibr.hook.InitFields(ibr, aiq.instructions, aiq.list);
@@ -129,7 +129,7 @@ MODULE XmppRegister;
 		ibr.hook.Registered(ibr, aiq.id)
 	END Registered;
 
-	PROCEDURE (ibr: IBReg) Iq- (data: Items.Item; VAR res: INTEGER);
+	PROCEDURE (ibr: IBReg) Iq- (data: Items.Item; VAR res: LONGINT);
 		VAR e: Items.Item; aiq: AnswerIq;
 	BEGIN
 		e := data.First();
@@ -198,7 +198,7 @@ MODULE XmppRegister;
 	END Failed;
 
 	PROCEDURE (h: StdHook) InitFields (ibr: IBReg; IN instruction: ARRAY OF CHAR; fields: Stuff.List);
-		VAR i: INTEGER;
+		VAR i: LONGINT;
 	BEGIN
 		FOR i := 0 TO fields.Length() - 1 DO
 			IF fields.Item(i)(Field).name = 'username' THEN fields.Item(i)(Field).value := reg.username$
@@ -235,7 +235,7 @@ MODULE XmppRegister;
 	END Do;
 
 	PROCEDURE (a: ContinueAction) Do;
-		VAR id: ARRAY 17 OF CHAR; res: INTEGER; ibh: StdHook;
+		VAR id: ARRAY 17 OF CHAR; res: LONGINT; ibh: StdHook;
 	BEGIN
 		IF reg.s.StreamFeatures() # NIL THEN
 			reg.ibr := reg.s.LoadExtension('XmppRegister', res)(IBReg);
@@ -250,7 +250,7 @@ MODULE XmppRegister;
 	END Do;
 
 	PROCEDURE Register* (remoteAdr, username, server, password: ARRAY OF CHAR; regHook: RegisterHook);
-		VAR a: StartAction; res: INTEGER;
+		VAR a: StartAction; res: LONGINT;
 	BEGIN
 		reg.s := Core.dir.NewSession(remoteAdr, username$ + '@' + server, password, {Core.noAuth});
 		Core.dir.Start(reg.s, res);
