@@ -14,15 +14,15 @@ MODULE XmppDateTime;
 	
 	TYPE
 		Date* = RECORD
-			year*, month*, day* : INTEGER;
+			year*, month*, day* : LONGINT;
 		END;
 		
 		Time* = RECORD
-			hour*, min*, sec*, mSec*, zoneOffset* : INTEGER; utc* : BOOLEAN;
+			hour*, min*, sec*, mSec*, zoneOffset* : LONGINT; utc* : BOOLEAN;
 		END;
 		
 	PROCEDURE DateToString*(IN date : Date; OUT s : ARRAY OF CHAR);
-	VAR y : ARRAY 5 OF CHAR; m : ARRAY 3 OF CHAR; d : ARRAY 3 OF CHAR; res : INTEGER;
+	VAR y : ARRAY 5 OF CHAR; m : ARRAY 3 OF CHAR; d : ARRAY 3 OF CHAR; res : LONGINT;
 	BEGIN
 		ASSERT(LEN(s)>=11, 21); ASSERT((date.month<13) & (date.month>0)); ASSERT((date.day<32)&(date.day>0));
 		Strings.IntToStringForm(date.year,Strings.decimal,4,'0',Strings.hideBase,y);
@@ -71,10 +71,10 @@ MODULE XmppDateTime;
 	
 	PROCEDURE StringToDateTime*(IN s : ARRAY OF CHAR; OUT date : Date; OUT time : Time);
 	(** layout : CCYY-MM-DDThh:mm:ss[.sss]TZD **)
-	VAR i, pos : INTEGER; res : INTEGER; buf : DS.DynString; hasTime, expectZone, expectMsec : BOOLEAN;
+	VAR i, pos : LONGINT; res : LONGINT; buf : DS.DynString; hasTime, expectZone, expectMsec : BOOLEAN;
 	BEGIN
 		i:=0; pos:=0; buf:=DS.Create(''); res:=0; expectZone:=FALSE; expectMsec:=FALSE; hasTime:=FALSE;
-		date.year:=-1; date.month:=-1; date.day:=-1; time.hour:=-1; time.min:=-1; time.sec:=-1; time.mSec:=-1; time.zoneOffset:=MAX(INTEGER); time.utc:=FALSE;
+		date.year:=-1; date.month:=-1; date.day:=-1; time.hour:=-1; time.min:=-1; time.sec:=-1; time.mSec:=-1; time.zoneOffset:=MAX(LONGINT); time.utc:=FALSE;
 		WHILE pos<LEN(s$) DO
 			CASE s[pos] OF
 				'-' : 

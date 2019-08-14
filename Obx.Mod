@@ -17,9 +17,9 @@ MODULE XmppObx;
 			dlg* : RECORD
 				user*, server*, pwd*, res*, remoteAdr*, to* : Dialog.String;
 			END;
-			x* : INTEGER; y* : REAL; z* : SET; u* : BOOLEAN;
-			v* : ARRAY 4 OF ARRAY 3 OF ARRAY 4 OF RECORD x* :INTEGER; y* : REAL END;
-			d* : LONGINT;
+			x* : LONGINT; y* : REAL; z* : SET; u* : BOOLEAN;
+			v* : ARRAY 4 OF ARRAY 3 OF ARRAY 4 OF RECORD x* :LONGINT; y* : REAL END;
+			d* : HUGEINT;
 			j* : CHAR;
 		END;
 			
@@ -39,7 +39,7 @@ MODULE XmppObx;
 		END;
 	
 	PROCEDURE FillRoster(list: Linear.List);
-	VAR i: INTEGER; it: S.RosterItem;
+	VAR i: LONGINT; it: S.RosterItem;
 	BEGIN
 		i:=0; dlg.to.SetLen(list.len);
 		WHILE i<list.len DO it:=list.GetItem(i)(S.RosterItem); dlg.to.SetItem(i, it.jid$); INC(i) END;
@@ -66,7 +66,7 @@ MODULE XmppObx;
 	END Ready;
 	
 	PROCEDURE SendMsg2*;
-	VAR m: Msg2; res: INTEGER;
+	VAR m: Msg2; res: LONGINT;
 	BEGIN
 		Strings.IntToString((Services.Ticks() DIV 1000), m.title); m.content:=dlg.in$;
 		dlg.in:=''; Dialog.UpdateString(dlg.in); 
@@ -85,7 +85,7 @@ MODULE XmppObx;
 	END SendMsg2Guard;
 	
 	PROCEDURE SendMsg*;
-	VAR m : Msg; i, j, z, res : INTEGER;
+	VAR m : Msg; i, j, z, res : LONGINT;
 	BEGIN
 		NEW(m);
 		m.dlg.user:='akapetryxa';
@@ -117,7 +117,7 @@ MODULE XmppObx;
 	END SendTextGuard;
 	
 	PROCEDURE SendText*;
-	VAR m: S.SendStdMsg; res: INTEGER;
+	VAR m: S.SendStdMsg; res: LONGINT;
 	BEGIN
 		m.type:=S.chatMsg;
 		NEW(m.subject, 1); NEW(m.thread, 1); NEW(m.body, LEN(dlg.in$)+1);
@@ -127,7 +127,7 @@ MODULE XmppObx;
 	END SendText;
 	
 	PROCEDURE SendText2*;
-	VAR m: S.SendConfirmableMsg; res: INTEGER;
+	VAR m: S.SendConfirmableMsg; res: LONGINT;
 	BEGIN
 		m.type:=S.chatMsg;
 		NEW(m.subject, 1); NEW(m.thread, 1); NEW(m.body, LEN(dlg.in$)+1);
@@ -138,7 +138,7 @@ MODULE XmppObx;
 	END SendText2;
 	
 	PROCEDURE SendFile*;
-	VAR loc: Files.Locator; name: Files.Name; m: S.SendFileMsg; res: INTEGER;
+	VAR loc: Files.Locator; name: Files.Name; m: S.SendFileMsg; res: LONGINT;
 	BEGIN
 		Dialog.GetIntSpec('*', loc, name);
 		IF loc#NIL THEN
@@ -157,7 +157,7 @@ MODULE XmppObx;
 	END SendFile;
 	
 	PROCEDURE RecvFile(from, name: ARRAY OF CHAR; id: S.StreamId);
-	VAR loc: Files.Locator; m: S.AcceptFileMsg; res: INTEGER;
+	VAR loc: Files.Locator; m: S.AcceptFileMsg; res: LONGINT;
 	BEGIN
 		Dialog.GetExtSpec(name$, '*', loc, rec.fn);
 		IF loc#NIL THEN 
@@ -173,7 +173,7 @@ MODULE XmppObx;
 	END Disconnect;
 		
 	PROCEDURE Connect*;
-	VAR res : INTEGER;
+	VAR res : LONGINT;
 	BEGIN
 		Cmds.NewSession(dlg.user, dlg.pwd, dlg.server, dlg.res, dlg.remoteAdr, rec.s, res);
 		IF res=0 THEN
@@ -185,7 +185,7 @@ MODULE XmppObx;
 	END Connect;
 	
 	PROCEDURE HandleBusMsg* (VAR msg: AbfBus.Message);
-	VAR name, to, from : ARRAY 256 OF CHAR; grm: S.GetRosterMsg; s: S.Session; res: INTEGER;
+	VAR name, to, from : ARRAY 256 OF CHAR; grm: S.GetRosterMsg; s: S.Session; res: LONGINT;
 	BEGIN	
 		Services.GetTypeName(msg, name); StdLog.Ln; StdLog.String(name);
 		WITH 

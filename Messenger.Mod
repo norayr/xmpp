@@ -68,7 +68,7 @@ MODULE XmppMessenger;
 		END;
 		
 		ReceiptsAction* = POINTER TO ABSTRACT RECORD (Services.Action) 
-			done: INTEGER;
+			done: LONGINT;
 			id: ARRAY 127 OF CHAR;
 			owner: Messenger;
 			to: ARRAY 512 OF CHAR; 
@@ -76,7 +76,7 @@ MODULE XmppMessenger;
 		
 	VAR
 		dir- : Directory;
-		timeOut*: INTEGER;
+		timeOut*: LONGINT;
 		
 	PROCEDURE ^ (d: Directory) Confirmed(m: Messenger; IN from, id: ARRAY OF CHAR), NEW;
 	PROCEDURE ^ (d: Directory) TimeOut(a: ReceiptsAction), NEW;
@@ -184,7 +184,7 @@ MODULE XmppMessenger;
 		END;
 	END Use;
 	
-	PROCEDURE (m : Messenger) Message-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (m : Messenger) Message-(data : Items.Item; VAR res : LONGINT);
 	VAR n : Items.Item; msg : Message;
 	BEGIN
 		NEW(msg); msg.Init(data);

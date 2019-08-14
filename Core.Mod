@@ -72,7 +72,7 @@ MODULE XmppCore;
 			
 		Response = POINTER TO RECORD(Stanza)
 			data : Sasl.Data;
-			step : INTEGER;
+			step : LONGINT;
 		END;
 		
 		Success = POINTER TO ABSTRACT RECORD(Stanza) END; 
@@ -99,7 +99,7 @@ MODULE XmppCore;
 			stream : Stream;
 			jid : ARRAY 3096 OF CHAR;
 			password : ARRAY 512 OF CHAR;
-			saslStep : INTEGER;
+			saslStep : LONGINT;
 			rspauth : ARRAY 127 OF CHAR;
 			authorized : BOOLEAN;
 			hook : Hook;
@@ -113,18 +113,18 @@ MODULE XmppCore;
 		
 		Feature* = POINTER TO RECORD
 			name-, value- : DynString;
-			level- : INTEGER;
+			level- : LONGINT;
 		END;
 		
 		ConsoleMsg* = RECORD(AbfBus.Message)
 			session- : Session;
 			in-, out- : POINTER TO ARRAY OF CHAR;
-			code- : INTEGER;
+			code- : LONGINT;
 		END;
 		
 		UpdateMsg* = RECORD(AbfBus.Message)
 			session- : Session;
-			type- : INTEGER;
+			type- : LONGINT;
 			item- : Items.Item;
 		END;
 		
@@ -138,7 +138,7 @@ MODULE XmppCore;
 		
 		ExtensionDir* = POINTER TO ABSTRACT RECORD END;
 		
-		ConnectionError = POINTER TO RECORD code : INTEGER; END;
+		ConnectionError = POINTER TO RECORD code : LONGINT; END;
 		
 	VAR
 		dir-, stdDir- : Directory;  (* stanzaDir- : StanzaDirectory; *)
@@ -146,7 +146,7 @@ MODULE XmppCore;
 	PROCEDURE (s : Stanza) Use-(item : Items.Item), NEW, EMPTY;
 	PROCEDURE (s : Stanza) Do- () : Items.Item, NEW, ABSTRACT;
 	PROCEDURE (d : Directory) NewSession*(remoteAdr, jid : ARRAY OF CHAR; password : ARRAY OF CHAR; opts : SET) : Session, NEW, ABSTRACT;
-	PROCEDURE (d : Directory) Start*(s: Session; OUT res: INTEGER), NEW, ABSTRACT;
+	PROCEDURE (d : Directory) Start*(s: Session; OUT res: LONGINT), NEW, ABSTRACT;
 	PROCEDURE (d : Directory) Stop*(s: Session), NEW, ABSTRACT;
 	PROCEDURE (d : Directory) Connected*(s: Session): BOOLEAN, NEW, ABSTRACT;
 	
@@ -162,11 +162,11 @@ MODULE XmppCore;
 	PROCEDURE (s : Session) SetHook*(hook : Hook), NEW, ABSTRACT;	
 	PROCEDURE (s : Session) SetErrorHook*(errorHook : ErrorHook), NEW, ABSTRACT;
 	PROCEDURE (s : Session) Send*(stanza : Stanza), NEW, ABSTRACT;
-	PROCEDURE (s : Session) LoadExtension*(extensionModule : ARRAY OF CHAR; OUT res : INTEGER) : Extension, NEW, ABSTRACT;
+	PROCEDURE (s : Session) LoadExtension*(extensionModule : ARRAY OF CHAR; OUT res : LONGINT) : Extension, NEW, ABSTRACT;
 	PROCEDURE (s : Session) ExtensionsList*() : ANYPTR, NEW, ABSTRACT;
 PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
-	PROCEDURE (s : Session) UnloadExtension*(extension : Extension; OUT res : INTEGER), NEW, ABSTRACT;
-	PROCEDURE (s : Session) Notify*(VAR msg : ANYREC; OUT res : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (s : Session) UnloadExtension*(extension : Extension; OUT res : LONGINT), NEW, ABSTRACT;
+	PROCEDURE (s : Session) Notify*(VAR msg : ANYREC; OUT res : LONGINT), NEW, ABSTRACT;
 	
 (** Hook **)	
 	PROCEDURE (h : Hook) In-(session : Session; data : Items.Item), NEW, ABSTRACT;
@@ -176,10 +176,10 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	PROCEDURE (h : ErrorHook) Error*(session : Session; data : Error), NEW, ABSTRACT;
 
 (** Extension **)
-	PROCEDURE (e : Extension) Iq-(item : Items.Item; VAR res : INTEGER), NEW, EMPTY;	
-	PROCEDURE (e : Extension) Message-(item : Items.Item; VAR res : INTEGER), NEW, EMPTY;
-	PROCEDURE (e : Extension) Presence-(item : Items.Item; VAR res : INTEGER), NEW, EMPTY;
-	PROCEDURE (e : Extension) Other-(item : Items.Item; VAR res : INTEGER), NEW, EMPTY;
+	PROCEDURE (e : Extension) Iq-(item : Items.Item; VAR res : LONGINT), NEW, EMPTY;	
+	PROCEDURE (e : Extension) Message-(item : Items.Item; VAR res : LONGINT), NEW, EMPTY;
+	PROCEDURE (e : Extension) Presence-(item : Items.Item; VAR res : LONGINT), NEW, EMPTY;
+	PROCEDURE (e : Extension) Other-(item : Items.Item; VAR res : LONGINT), NEW, EMPTY;
 	PROCEDURE (e : Extension) Wrote-(item : Items.Item), NEW, EMPTY;
 	PROCEDURE (e : Extension) Start-, NEW, ABSTRACT;
 	PROCEDURE (e : Extension) Stop-, NEW, ABSTRACT;
@@ -187,8 +187,8 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	PROCEDURE (d : ExtensionDir) Create-(owner : Session) : Extension, NEW, ABSTRACT;
 
 (** Auxulary **)
-	PROCEDURE AddFeature(l : List; name, value : ARRAY OF CHAR; level : INTEGER);
-	VAR i, res : INTEGER; items : POINTER TO ARRAY OF ANYPTR; item : Feature;
+	PROCEDURE AddFeature(l : List; name, value : ARRAY OF CHAR; level : LONGINT);
+	VAR i, res : LONGINT; items : POINTER TO ARRAY OF ANYPTR; item : Feature;
 	BEGIN 
 		NEW(item);
 		item.name:=DS.Create(name); item.value:=DS.Create(value); item.level:=level;
@@ -196,7 +196,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END AddFeature;
 	
 	PROCEDURE FindStanza(l : List; data : ANYPTR) : StdStanza;	
-	VAR i : INTEGER; ok : BOOLEAN;
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		IF l.Length()>0 THEN
 			ok:=FALSE; i:=0;
@@ -217,7 +217,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END SetOwner;
 	
 	PROCEDURE (s : Stanza) Data*() : ANYPTR;
-		VAR x : Items.Item; usr, srv, psrv, rsrc, to, from: ARRAY 512 OF CHAR; res: INTEGER;
+		VAR x : Items.Item; usr, srv, psrv, rsrc, to, from: ARRAY 512 OF CHAR; res: LONGINT;
 	BEGIN
 		x:=s.Do();
 		ASSERT(x#NIL, 60);
@@ -258,7 +258,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END Set;
 	
 	PROCEDURE (s : Stanza) Init*(item : ANYPTR), NEW;
-		VAR psrv, srv: ARRAY 512 OF CHAR; res: INTEGER;
+		VAR psrv, srv: ARRAY 512 OF CHAR; res: LONGINT;
 	BEGIN
 		WITH item : Items.Item DO
 			s.to:=item.GetParam(Const.to)$;
@@ -310,7 +310,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		RETURN x;
 	END Do;
 	
-	PROCEDURE Features(s : Stream; root : Items.Item; level : INTEGER);
+	PROCEDURE Features(s : Stream; root : Items.Item; level : LONGINT);
 	VAR x : Items.Item; str : POINTER TO ARRAY OF CHAR;
 	BEGIN
 		IF s.features=NIL THEN s.features:=Stuff.CreateList() END;
@@ -342,7 +342,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	
 (** Auth **)	
 	PROCEDURE (a : Auth) Do() : Items.Item;
-	VAR x: Items.Item; i: INTEGER; ds: DS.DynString; u, p: POINTER TO ARRAY OF SHORTCHAR; res: POINTER TO ARRAY OF BYTE;
+	VAR x: Items.Item; i: LONGINT; ds: DS.DynString; u, p: POINTER TO ARRAY OF SHORTCHAR; res: POINTER TO ARRAY OF BYTE;
 	BEGIN
 		x:=Items.New(Const.auth);
 		x.SetParam(Const.xmlns, Const.uriSasl); 
@@ -472,7 +472,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	PROCEDURE ^ DefaultErrorReport(s : StdSession; error : Error);
 	
 	PROCEDURE UpdateExtensions(s : StdSession; data : Items.Item);
-	VAR i : INTEGER; res : INTEGER; name : ARRAY 127 OF CHAR;
+	VAR i : LONGINT; res : LONGINT; name : ARRAY 127 OF CHAR;
 	BEGIN
 		i:=0; res:=continue;
 		WHILE (i<s.extensions.Length())&(res=continue) DO
@@ -487,7 +487,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END UpdateExtensions;
 	
 	PROCEDURE NotifyExtensions(s : StdSession; data : Items.Item);
-	VAR i : INTEGER;
+	VAR i : LONGINT;
 	BEGIN
 		i:=0;
 		WHILE (i<s.extensions.Length()) DO
@@ -497,7 +497,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END NotifyExtensions;
 	
 	PROCEDURE StartExtensions(s : StdSession);
-	VAR i : INTEGER;
+	VAR i : LONGINT;
 	BEGIN
 		i:=0;
 		WHILE (i<s.extensions.Length()) DO
@@ -507,7 +507,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END StartExtensions;
 	
 	PROCEDURE Out(s : StdSession; item : Items.Item);
-	VAR msg : UpdateMsg; res : INTEGER;
+	VAR msg : UpdateMsg; res : LONGINT;
 	BEGIN
 		msg.session:=s;
 		msg.item:=item;
@@ -518,7 +518,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END Out;
 	
 	PROCEDURE In(s : StdSession; item : Items.Item);
-	VAR msg : UpdateMsg; res : INTEGER;
+	VAR msg : UpdateMsg; res : LONGINT;
 	BEGIN
 		msg.session:=s;
 		msg.item:=item;
@@ -529,7 +529,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END In;
 	
 	PROCEDURE (s : StdSession) HasFeature(name, value : ARRAY OF CHAR) : BOOLEAN;
-	VAR i : INTEGER; ok : BOOLEAN;		
+	VAR i : LONGINT; ok : BOOLEAN;		
 	BEGIN
 		IF (s.stream#NIL) & (s.stream.features#NIL) & (s.stream.features.Length()>0) THEN
 			ok:=FALSE; i:=0;
@@ -557,7 +557,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END Error;
 
 	PROCEDURE (s : StdSession) Server() : POINTER TO ARRAY OF CHAR;
-	VAR start, end, len : INTEGER; str :  ARRAY 3096 OF CHAR; pstr : POINTER TO ARRAY OF CHAR;
+	VAR start, end, len : LONGINT; str :  ARRAY 3096 OF CHAR; pstr : POINTER TO ARRAY OF CHAR;
 	BEGIN
 		Strings.Find(s.jid, '@',0,start); 
 		ASSERT(start#-1, 21);
@@ -569,7 +569,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END Server;
  
 	PROCEDURE (s : StdSession) Username() : POINTER TO ARRAY OF CHAR;
-	VAR start, end, len : INTEGER; str :  ARRAY 3096 OF CHAR; pstr : POINTER TO ARRAY OF CHAR;
+	VAR start, end, len : LONGINT; str :  ARRAY 3096 OF CHAR; pstr : POINTER TO ARRAY OF CHAR;
 	BEGIN
 		Strings.Find(s.jid, '@',0,start); 
 		ASSERT(start#-1, 21);
@@ -579,7 +579,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END Username;
 	
 	PROCEDURE (s : StdSession) Resource() : POINTER TO ARRAY OF CHAR;
-	VAR start, end, len : INTEGER; str :  ARRAY 3096 OF CHAR; pstr : POINTER TO ARRAY OF CHAR;
+	VAR start, end, len : LONGINT; str :  ARRAY 3096 OF CHAR; pstr : POINTER TO ARRAY OF CHAR;
 	BEGIN
 		Strings.Find(s.jid, '/',0,start);
 		IF start>-1 THEN 
@@ -699,8 +699,8 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		s.errorHook:=errorHook;
 	END SetErrorHook;
 	
-	PROCEDURE (s : StdSession) SendConsoleMsg(code : INTEGER), NEW;
-	VAR msg : ConsoleMsg; res : INTEGER;
+	PROCEDURE (s : StdSession) SendConsoleMsg(code : LONGINT), NEW;
+	VAR msg : ConsoleMsg; res : LONGINT;
 	BEGIN
 		msg.session:=s;
 		msg.in:=s.c.ReadBuffer();
@@ -709,13 +709,13 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		AbfBus.Send(msg, res);
 	END SendConsoleMsg;
 
-	PROCEDURE (s : StdSession) Notify(VAR msg : ANYREC; OUT res : INTEGER);
+	PROCEDURE (s : StdSession) Notify(VAR msg : ANYREC; OUT res : LONGINT);
 	BEGIN
 		WITH msg : AbfBus.Message DO AbfBus.Send(msg, res)
 		ELSE END;
 	END Notify;
 	
-	PROCEDURE (s : StdSession) UpdateError-(code : INTEGER);
+	PROCEDURE (s : StdSession) UpdateError-(code : LONGINT);
 	VAR ce : ConnectionError; e : Error;
 	BEGIN
 		NEW(ce);
@@ -797,11 +797,11 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		s.c.Raw(in);
 	END Raw;
 	
-	PROCEDURE (s : StdSession) LoadExtension(extensionModule : ARRAY OF CHAR; OUT res : INTEGER) : Extension;
+	PROCEDURE (s : StdSession) LoadExtension(extensionModule : ARRAY OF CHAR; OUT res : LONGINT) : Extension;
 	VAR e : Extension; item : Meta.Item; ed : ANYPTR; ok : BOOLEAN;
 		
 		PROCEDURE Exists(VAR x : Extension) : BOOLEAN;
-		VAR i,j : INTEGER; z : BOOLEAN; str : ARRAY 127 OF CHAR;
+		VAR i,j : LONGINT; z : BOOLEAN; str : ARRAY 127 OF CHAR;
 		BEGIN
 			z:=FALSE; i:=0;
 			WHILE (i<s.extensions.Length()) & ~z DO
@@ -834,8 +834,8 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		RETURN e;
 	END LoadExtension;
 	
-	PROCEDURE (s : StdSession) UnloadExtension(extension : Extension; OUT res : INTEGER);
-	VAR i : INTEGER; ok : BOOLEAN;
+	PROCEDURE (s : StdSession) UnloadExtension(extension : Extension; OUT res : LONGINT);
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		WHILE (i<s.extensions.Length()) & ~ok DO
@@ -886,7 +886,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		RETURN s; 
 	END NewSession;
 	
-	PROCEDURE (d : StdDirectory) Start(s: Session; OUT res: INTEGER);
+	PROCEDURE (d : StdDirectory) Start(s: Session; OUT res: LONGINT);
 	BEGIN
 		ASSERT(s#NIL, 20);
 		WITH s: StdSession DO
@@ -918,7 +918,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 		dir:=d
 	END SetDir;
 	
-	PROCEDURE GetDataLength*(s: Session; OUT in, out: LONGINT);
+	PROCEDURE GetDataLength*(s: Session; OUT in, out: HUGEINT);
 	BEGIN
 		WITH s: StdSession DO
 			Connections.GetDataLength(s.c, in, out);
@@ -931,7 +931,7 @@ PROCEDURE (s : Session) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
 	END SetStanzaDir;
 *)	
 	
-	PROCEDURE SetLimit*(s: Session; max: INTEGER);
+	PROCEDURE SetLimit*(s: Session; max: LONGINT);
 	BEGIN
 		WITH s: StdSession DO
 			s.c.LimitData(max);

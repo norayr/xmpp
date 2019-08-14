@@ -35,7 +35,7 @@ PROCEDURE WithEntities(str : DynStrings.String) : DynStrings.String;
 VAR
 	s : DynStrings.DynString;
 	buf : DynStrings.DynString;
-	i, res : INTEGER; ok : BOOLEAN;
+	i, res : LONGINT; ok : BOOLEAN;
 	out : EntityString;
 BEGIN	
 	res:=-1; ok:=FALSE;
@@ -66,7 +66,7 @@ END WithEntities;
 PROCEDURE (g : Generator) Attr(root : Dom.Element), NEW;
 VAR
 		a : Dom.Attr;
-		i : INTEGER;
+		i : LONGINT;
 BEGIN
 	IF (root.attributes#NIL) THEN
 		FOR i:=0 TO root.attributes.length-1 DO

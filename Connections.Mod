@@ -38,7 +38,7 @@ MODULE XmppConnections;
 			p : Parser.Parser;
 			g : Gen.Generator;
 			closed : BOOLEAN;
-			wroteBytes, readBytes: LONGINT;
+			wroteBytes, readBytes: HUGEINT;
 		END;
 		
 	VAR
@@ -46,7 +46,7 @@ MODULE XmppConnections;
 		doc- : Dom.XmlDocument;
 		protocol, localAdr : ARRAY 128 OF CHAR;
 (********************************************************************************)
-	PROCEDURE XmlReportError(pos, line, row: INTEGER; IN msg: ARRAY OF CHAR);
+	PROCEDURE XmlReportError(pos, line, row: LONGINT; IN msg: ARRAY OF CHAR);
 	BEGIN
 		IF LOG THEN Log.Ln; Log.String('Unrecoverable stream error'); Log.Ln; END;
 	END XmlReportError;
@@ -55,18 +55,18 @@ MODULE XmppConnections;
 	
 	PROCEDURE (o : Owner) UpdateRead-(data : ANYPTR), NEW, ABSTRACT;
 	PROCEDURE (o : Owner) UpdateWrite-(data : ANYPTR), NEW, ABSTRACT;
-	PROCEDURE (o : Owner) UpdateError-(code : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (o : Owner) UpdateError-(code : LONGINT), NEW, ABSTRACT;
 
 	PROCEDURE (d : Directory) NewConnection*(owner : Owner; remoteAdr : ARRAY OF CHAR) : Connection, NEW, ABSTRACT;
 
 	PROCEDURE (c : Connection) ReadBuffer*() : POINTER TO ARRAY OF CHAR, NEW, ABSTRACT;
 	PROCEDURE (c : Connection) WriteBuffer*() : POINTER TO ARRAY OF CHAR, NEW, ABSTRACT;
 	PROCEDURE (c : Connection) Raw*(in : ARRAY OF CHAR), NEW, ABSTRACT;
-	PROCEDURE (c : Connection) Open*(OUT res: INTEGER), NEW, ABSTRACT;
+	PROCEDURE (c : Connection) Open*(OUT res: LONGINT), NEW, ABSTRACT;
 	PROCEDURE (c : Connection) Connected*() : BOOLEAN, NEW, ABSTRACT;
 	PROCEDURE (c : Connection) Close*, NEW, ABSTRACT;
 	PROCEDURE (c : Connection) WriteData*(fragment : Entity; split : BOOLEAN), NEW, ABSTRACT;
-	PROCEDURE (c: Connection) LimitData*(max: INTEGER), NEW, ABSTRACT;
+	PROCEDURE (c: Connection) LimitData*(max: LONGINT), NEW, ABSTRACT;
 	
 	PROCEDURE (c : StdConnection) ReadBuffer() : POINTER TO ARRAY OF CHAR;
 	BEGIN
@@ -83,8 +83,8 @@ MODULE XmppConnections;
 		c.stream.Raw(in);
 	END Raw;
 	
-	PROCEDURE (c : StdConnection) Open(OUT res: INTEGER);
-	VAR num: INTEGER;
+	PROCEDURE (c : StdConnection) Open(OUT res: LONGINT);
+	VAR num: LONGINT;
 	BEGIN
 		XmlStream.InstallDir;
 		c.stream:=XmlStream.dir.NewStream(c); res:=-1; num:=0;
@@ -104,7 +104,7 @@ MODULE XmppConnections;
 		XmlStream.ResetDir;
 	END Open;
 	
-	PROCEDURE (c: StdConnection) LimitData (max: INTEGER);
+	PROCEDURE (c: StdConnection) LimitData (max: LONGINT);
 	BEGIN
 		c.stream.Limit(max);
 	END LimitData;
@@ -115,7 +115,7 @@ MODULE XmppConnections;
 	END Connected;
 		
 	PROCEDURE (c : StdConnection) Close;
-	VAR res : INTEGER;
+	VAR res : LONGINT;
 	BEGIN
 		c.stream.Close;
 		c.closed:=TRUE;
@@ -164,7 +164,7 @@ MODULE XmppConnections;
 		Services.Collect;
 	END Write;
 	
-	PROCEDURE (c : StdConnection) Alert(error : INTEGER);
+	PROCEDURE (c : StdConnection) Alert(error : LONGINT);
 	BEGIN
 		IF ~c.closed THEN
 			CASE error OF
@@ -200,7 +200,7 @@ MODULE XmppConnections;
 		localAdr:=locAdr$;
 	END InitDriver;
 	
-	PROCEDURE GetDataLength*(c: Connection; OUT in, out: LONGINT);
+	PROCEDURE GetDataLength*(c: Connection; OUT in, out: HUGEINT);
 	BEGIN
 		WITH c: StdConnection DO
 			in:=c.readBytes; out:=c.wroteBytes;

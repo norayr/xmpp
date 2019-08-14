@@ -66,25 +66,25 @@ MODULE XmppStreamInit;
 			sid-, id: ARRAY 127 OF CHAR;
 			name-, descr-, hash-, date-: ARRAY 256 OF CHAR; 
 			range-: BOOLEAN; 
-			offset-, length-: INTEGER; 
+			offset-, length-: LONGINT; 
 			methods-: SET
 		END;
 		
 		OfferIq = POINTER TO RECORD(Core.Iq)
 			sid, name, descr, date, hash: ARRAY 256 OF CHAR;
-			range: BOOLEAN; offset, length: INTEGER;
+			range: BOOLEAN; offset, length: LONGINT;
 			method: SET;
 		END;
 		
 		AcceptIq = POINTER TO RECORD(Core.Iq)
-			method: INTEGER;
+			method: LONGINT;
 		END;
 		
 	VAR
 		dir- : Directory;
 	
 	PROCEDURE (h: Hook) Offered-(si: StreamInit; from: ARRAY OF CHAR; VAR a: Action), NEW, ABSTRACT;
-	PROCEDURE (h: Hook) Accepted-(si: StreamInit; from: ARRAY OF CHAR; a: Action; method: INTEGER), NEW, ABSTRACT;
+	PROCEDURE (h: Hook) Accepted-(si: StreamInit; from: ARRAY OF CHAR; a: Action; method: LONGINT), NEW, ABSTRACT;
 	PROCEDURE (h: Hook) Ready-(si: StreamInit; from: ARRAY OF CHAR; a: Action), NEW, ABSTRACT;
 	
 	PROCEDURE (oi : OfferIq) Do() : Items.Item;
@@ -110,7 +110,7 @@ MODULE XmppStreamInit;
 	END Do;
 	
 	PROCEDURE (oi : OfferIq) Use(item : Items.Item);
-	VAR n, n1, n2, n3, n4 : Items.Item; ok: BOOLEAN; res: INTEGER;
+	VAR n, n1, n2, n3, n4 : Items.Item; ok: BOOLEAN; res: LONGINT;
 	BEGIN
 		oi.Set(item.GetParam(Const.to)$, item.GetParam(Const.from)$, item.GetParam(Const.xmlLang)$, item.GetParam(Const.id)$, item.GetParam(Const.type)$);
 		item.Find(si, n, res); oi.sid:=n.GetParam(Const.id)$;
@@ -170,7 +170,7 @@ MODULE XmppStreamInit;
 	END Do;
 	
 	PROCEDURE (ai : AcceptIq) Use(item : Items.Item);
-	VAR n, n1, n2, n3, n4 : Items.Item; ok: BOOLEAN; res: INTEGER;
+	VAR n, n1, n2, n3, n4 : Items.Item; ok: BOOLEAN; res: LONGINT;
 	BEGIN
 		ai.Set(item.GetParam(Const.to)$, item.GetParam(Const.from)$, item.GetParam(Const.xmlLang)$, item.GetParam(Const.id)$, item.GetParam(Const.type)$);
 		item.Find(si, n, res);
@@ -226,7 +226,7 @@ MODULE XmppStreamInit;
 		END;
 	END HandleAccept;	
 	
-	PROCEDURE (s : StreamInit) Iq-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (s : StreamInit) Iq-(data : Items.Item; VAR res : LONGINT);
 	VAR n: Items.Item; oi: OfferIq; ai: AcceptIq;
 	BEGIN
 		n:=data.First();
@@ -266,7 +266,7 @@ MODULE XmppStreamInit;
 		RETURN s;
 	END Create;
 	
-	PROCEDURE OfferStream*(si: StreamInit; to, from, name, descr, date: ARRAY OF CHAR; range: BOOLEAN; offset, length: INTEGER; hash: ARRAY OF CHAR; method: SET; a: Action);
+	PROCEDURE OfferStream*(si: StreamInit; to, from, name, descr, date: ARRAY OF CHAR; range: BOOLEAN; offset, length: LONGINT; hash: ARRAY OF CHAR; method: SET; a: Action);
 		VAR oi: OfferIq;
 	BEGIN
 		ASSERT(a#NIL, 20);
@@ -286,7 +286,7 @@ MODULE XmppStreamInit;
 		si.owner.Send(oi);
 	END OfferStream;
 	
-	PROCEDURE AcceptStream*(si: StreamInit; to, from: ARRAY OF CHAR; a: Action; method: INTEGER);
+	PROCEDURE AcceptStream*(si: StreamInit; to, from: ARRAY OF CHAR; a: Action; method: LONGINT);
 		VAR ai: AcceptIq;
 	BEGIN
 		ASSERT(a#NIL, 20);

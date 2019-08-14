@@ -72,7 +72,7 @@ MODULE XmppBus;
 		
 		RecvIq = POINTER TO RECORD(Core.Iq) 
 			msg : MsgPtr;
-			res : INTEGER;
+			res : LONGINT;
 		END;
 		
 		PingIq = POINTER TO RECORD(Core.Iq) END;
@@ -80,7 +80,7 @@ MODULE XmppBus;
 		OkIq = POINTER TO RECORD(Core.Iq) END;
 		
 		ErrorIq = POINTER TO RECORD(Core.Iq) 
-			code: INTEGER;
+			code: LONGINT;
 		END;
 		
 		Converter* = POINTER TO ABSTRACT RECORD END;
@@ -99,8 +99,8 @@ MODULE XmppBus;
 	
 	PROCEDURE (h: Hook) Recv-(b : Bus; to, from : ARRAY OF CHAR; VAR msg : Message), NEW, ABSTRACT;
 	PROCEDURE (h: Hook) Ok-(b: Bus; IN from, id: ARRAY OF CHAR), NEW, ABSTRACT;
-	PROCEDURE (h: Hook) Error-(b: Bus; IN from, id: ARRAY OF CHAR; code: INTEGER), NEW, ABSTRACT;
-	PROCEDURE (c : Converter) ItemToMsg*(item : Items.Item; VAR msg : MsgPtr; res : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (h: Hook) Error-(b: Bus; IN from, id: ARRAY OF CHAR; code: LONGINT), NEW, ABSTRACT;
+	PROCEDURE (c : Converter) ItemToMsg*(item : Items.Item; VAR msg : MsgPtr; res : LONGINT), NEW, ABSTRACT;
 	PROCEDURE (c : Converter) MsgToItem*(VAR msg : Message; OUT item : Items.Item), NEW, ABSTRACT;
 	
 	PROCEDURE (siq : SendIq) Do() : Items.Item;
@@ -205,7 +205,7 @@ MODULE XmppBus;
 		b.map.Remove(id);
 	END Ok;
 	
-	PROCEDURE RemoteError(b: Bus; IN from, id: ARRAY OF CHAR; code: INTEGER);
+	PROCEDURE RemoteError(b: Bus; IN from, id: ARRAY OF CHAR; code: LONGINT);
 	BEGIN
 		b.hook.Error(b, from, id, code);
 		b.map.Remove(id);
@@ -234,8 +234,8 @@ MODULE XmppBus;
 		END
 	END Send;
 	
-	PROCEDURE (b : Bus) Iq-(data : Items.Item; VAR res : INTEGER);
-	VAR n: Items.Item; val: INTEGER; riq : RecvIq; err : BOOLEAN; piq: PingIq;
+	PROCEDURE (b : Bus) Iq-(data : Items.Item; VAR res : LONGINT);
+	VAR n: Items.Item; val: LONGINT; riq : RecvIq; err : BOOLEAN; piq: PingIq;
 	BEGIN
 		n:=data.First();
 		res:=Core.continue;
@@ -267,7 +267,7 @@ MODULE XmppBus;
 		END;
 	END Iq;
 	
-	PROCEDURE (b : Bus) Message-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (b : Bus) Message-(data : Items.Item; VAR res : LONGINT);
 	VAR n: Items.Item; 
 	BEGIN
 		n:=data.First();
@@ -277,7 +277,7 @@ MODULE XmppBus;
 		res:=Core.continue;
 	END Message;
 	
-	PROCEDURE (b : Bus) Presence-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (b : Bus) Presence-(data : Items.Item; VAR res : LONGINT);
 	VAR n: Items.Item; 
 	BEGIN
 		n:=data.First();
@@ -323,7 +323,7 @@ MODULE XmppBus;
 	END SetConv;
 	
 	PROCEDURE Init;
-	VAR d : Directory; res : INTEGER;
+	VAR d : Directory; res : LONGINT;
 	BEGIN
 		NEW(d);
 		dir:=d;

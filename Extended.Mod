@@ -25,7 +25,7 @@ MODULE XmppExtended;
 		bs: XmppByteStreams.ByteStreams;
 		bytestream: Stream;
 
-	PROCEDURE (h: PresenceHook) Notify (p: XmppPresence.Presence; type, from, show, status: ARRAY OF CHAR; priority: INTEGER; opts: XmppPresence.Opts);
+	PROCEDURE (h: PresenceHook) Notify (p: XmppPresence.Presence; type, from, show, status: ARRAY OF CHAR; priority: LONGINT; opts: XmppPresence.Opts);
 	BEGIN
 		Log.String(type + ' ' + from + ' ' + show + ' ' + status + ' '); Log.Int(priority); Log.Ln;
 	END Notify;
@@ -52,7 +52,7 @@ MODULE XmppExtended;
 		Log.String('Receiving');
 	END Receiving;
 
-	PROCEDURE (h: IbbHook) Transmitting- (ibb: XmppIbb.Ibb; sid, to: ARRAY OF CHAR; pos: INTEGER; VAR cancel: BOOLEAN);
+	PROCEDURE (h: IbbHook) Transmitting- (ibb: XmppIbb.Ibb; sid, to: ARRAY OF CHAR; pos: LONGINT; VAR cancel: BOOLEAN);
 	BEGIN
 		Log.String('Transmitting');
 	END Transmitting;
@@ -63,7 +63,7 @@ MODULE XmppExtended;
 	END Transmitted;
 
 	PROCEDURE (h: IbbHook) Received- (ibb: XmppIbb.Ibb; sid, from: ARRAY OF CHAR; file: Files.File);
-		VAR res: INTEGER;
+		VAR res: LONGINT;
 	BEGIN
 		file.Register('test', 'odc', Files.dontAsk, res);
 		file.Close;
@@ -92,7 +92,7 @@ MODULE XmppExtended;
 	END Push;
 
 	PROCEDURE (a: DiscoAction) Result;
-		VAR i: INTEGER;
+		VAR i: LONGINT;
 	BEGIN
 		Log.String('Disco ');
 		IF a.type = XmppDisco.info THEN
@@ -109,7 +109,7 @@ MODULE XmppExtended;
 	END Error;
 
 	PROCEDURE (a: RosterAction) Result;
-		VAR i: INTEGER;
+		VAR i: LONGINT;
 	BEGIN
 		Log.String('Roster ');
 		Log.Int(a.items.Length());
@@ -156,7 +156,7 @@ MODULE XmppExtended;
 		Log.String('done');
 	END Done;
 
-	PROCEDURE (s: Stream) WroteBytes (pos: INTEGER);
+	PROCEDURE (s: Stream) WroteBytes (pos: LONGINT);
 	BEGIN
 		Log.String('wrote');
 	END WroteBytes;
@@ -166,14 +166,14 @@ MODULE XmppExtended;
 		Log.String('read');
 	END ReadBytes;
 
-	PROCEDURE (s: Stream) Incoming (VAR file: Files.File; OUT pos: INTEGER);
+	PROCEDURE (s: Stream) Incoming (VAR file: Files.File; OUT pos: LONGINT);
 	BEGIN
 		file := Files.dir.New(Files.dir.This(''), Files.dontAsk);
 		pos := 0;
 	END Incoming;
 
 	PROCEDURE (s: Stream) ReaderClosed (file: Files.File);
-		VAR res: INTEGER;
+		VAR res: LONGINT;
 	BEGIN
 		file.Register('~test', 'file', Files.dontAsk, res);
 	END ReaderClosed;
@@ -185,18 +185,18 @@ MODULE XmppExtended;
 		stream := s;
 	END NewStream;
 
-	PROCEDURE (h: StreamHook) Connect (bs: XmppByteStreams.ByteStreams; host: XmppByteStreams.Host; OUT s: CommStreams.Stream; OUT res: INTEGER);
+	PROCEDURE (h: StreamHook) Connect (bs: XmppByteStreams.ByteStreams; host: XmppByteStreams.Host; OUT s: CommStreams.Stream; OUT res: LONGINT);
 	BEGIN
 		CommStreams.NewStream('CommTCP', '0.0.0.0:0', host.host$ + ':' + host.port$, s, res);
 	END Connect;
 
-	PROCEDURE (h: StreamHook) Bind (bs: XmppByteStreams.ByteStreams; host: XmppByteStreams.Host; VAR l: CommStreams.Listener; OUT res: INTEGER);
+	PROCEDURE (h: StreamHook) Bind (bs: XmppByteStreams.ByteStreams; host: XmppByteStreams.Host; VAR l: CommStreams.Listener; OUT res: LONGINT);
 	BEGIN
 		CommStreams.NewListener('CommTCP', '0.0.0.0:' + host.port$, l, res);
 	END Bind;
 
 	PROCEDURE (a: Action) Do;
-		VAR res: INTEGER; ph: PresenceHook; mh: MessengerHook; ibh: IbbHook; bsh: StreamHook; ra: RosterAction; rh: RsHook;
+		VAR res: LONGINT; ph: PresenceHook; mh: MessengerHook; ibh: IbbHook; bsh: StreamHook; ra: RosterAction; rh: RsHook;
 	BEGIN
 		IF ~s.Authorized() & (pr = NIL) THEN
 			s.StartStream;
@@ -340,7 +340,7 @@ MODULE XmppExtended;
 	END Do7;
 
 	PROCEDURE Send*;
-		VAR loc: Files.Locator; filename: Files.Name; file: Files.File; res: INTEGER;
+		VAR loc: Files.Locator; filename: Files.Name; file: Files.File; res: LONGINT;
 	BEGIN
 		loc := Files.dir.This(''); filename := '';
 		Dialog.GetIntSpec('*', loc, filename);

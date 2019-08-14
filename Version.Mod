@@ -87,7 +87,7 @@ MODULE XmppVersion;
 		v.owner.Send(vi);
 	END Answer;
 	
-	PROCEDURE (v : Version) Iq-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (v : Version) Iq-(data : Items.Item; VAR res : LONGINT);
 	VAR n: Items.Item; a : Action; vi : VerIq;
 	BEGIN
 		n:=data.First();

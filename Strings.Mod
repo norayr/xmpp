@@ -11,8 +11,8 @@ MODULE XmppStrings;
 **)
 	IMPORT Strings, Rand:=ypkMathRandom;
 	
-	PROCEDURE ServerFromJid*(IN jid : ARRAY OF CHAR; OUT server : ARRAY OF CHAR; res : INTEGER);
-	VAR start, end, len : INTEGER; str :  ARRAY 3096 OF CHAR;
+	PROCEDURE ServerFromJid*(IN jid : ARRAY OF CHAR; OUT server : ARRAY OF CHAR; res : LONGINT);
+	VAR start, end, len : LONGINT; str :  ARRAY 3096 OF CHAR;
 	BEGIN
 		ASSERT(jid#'', 21);
 		Strings.Find(jid, '@', 0, start);
@@ -23,8 +23,8 @@ MODULE XmppStrings;
 		server:=str$;  
 	END ServerFromJid;
  
-	PROCEDURE UsernameFromJid*(IN jid : ARRAY OF CHAR; OUT username : ARRAY OF CHAR; res : INTEGER);
-	VAR start, end, len : INTEGER; str :  ARRAY 3096 OF CHAR;
+	PROCEDURE UsernameFromJid*(IN jid : ARRAY OF CHAR; OUT username : ARRAY OF CHAR; res : LONGINT);
+	VAR start, end, len : LONGINT; str :  ARRAY 3096 OF CHAR;
 	BEGIN
 		ASSERT(jid#'', 21);
 		Strings.Find(jid, '@',0,start);
@@ -37,7 +37,7 @@ MODULE XmppStrings;
 	END UsernameFromJid;
 	
 	PROCEDURE ResourceFromJid*(IN jid : ARRAY OF CHAR; OUT resource : ARRAY OF CHAR);
-	VAR start, end, len : INTEGER; str :  ARRAY 3096 OF CHAR;
+	VAR start, end, len : LONGINT; str :  ARRAY 3096 OF CHAR;
 	BEGIN
 		ASSERT(jid#'', 21);
 		Strings.Find(jid, '/',0,start);
@@ -49,7 +49,7 @@ MODULE XmppStrings;
 	END ResourceFromJid;
 	
 	PROCEDURE GetProjectNameFromFullJid* (IN jid: ARRAY OF CHAR; OUT name: ARRAY OF CHAR);
-	VAR res: INTEGER;
+	VAR res: LONGINT;
 	BEGIN
 		res := 0;
 		Strings.Find(jid, '/', 0, res);
@@ -58,7 +58,7 @@ MODULE XmppStrings;
 	END GetProjectNameFromFullJid;
 
 	PROCEDURE GetShortJidFromFullJid* (IN jid: ARRAY OF CHAR; OUT sJid: ARRAY OF CHAR);
-	VAR res: INTEGER;
+	VAR res: LONGINT;
 	BEGIN
 		res := 0;
 		Strings.Find(jid, '/', 0, res);
@@ -66,7 +66,7 @@ MODULE XmppStrings;
 	END GetShortJidFromFullJid;
 
 	PROCEDURE JidCorrect* (jid : ARRAY OF CHAR): BOOLEAN;
-	VAR user, server: ARRAY 512 OF CHAR; res: INTEGER;
+	VAR user, server: ARRAY 512 OF CHAR; res: LONGINT;
 	BEGIN
 		UsernameFromJid(jid, user, res);
 		ServerFromJid(jid, server, res);

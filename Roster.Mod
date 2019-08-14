@@ -67,7 +67,7 @@ MODULE XmppRoster;
 	PROCEDURE (h: Hook) Push*(r: Roster; item: Item), NEW, ABSTRACT;
 	
 	PROCEDURE (i: Item) Jid*(): POINTER TO ARRAY OF CHAR, NEW;
-		VAR rs: DynString; u, s: ARRAY 512 OF CHAR; res: INTEGER;
+		VAR rs: DynString; u, s: ARRAY 512 OF CHAR; res: LONGINT;
 	BEGIN
 		rs:=DS.Create('');
 		XmppStrings.UsernameFromJid(i.jid2$, u, res);
@@ -79,7 +79,7 @@ MODULE XmppRoster;
 	END Jid;
 	
 	PROCEDURE (i: Item) SetJid(IN x: ARRAY OF CHAR), NEW;
-		VAR rs: DynString; u, s: ARRAY 512 OF CHAR; res: INTEGER;
+		VAR rs: DynString; u, s: ARRAY 512 OF CHAR; res: LONGINT;
 	BEGIN
 		rs:=DS.Create('');
 		XmppStrings.UsernameFromJid(x$, u, res);
@@ -97,7 +97,7 @@ MODULE XmppRoster;
 	END Add;	
 	
 	PROCEDURE (q: Queue) Find(id: ARRAY OF CHAR): Action, NEW; 
-	VAR i: INTEGER; ok: BOOLEAN;
+	VAR i: LONGINT; ok: BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		IF q.list#NIL THEN
@@ -265,7 +265,7 @@ MODULE XmppRoster;
 		r.owner.Send(riq);
 	END Remove;
 		
-	PROCEDURE (r: Roster) Iq-(data: Items.Item; VAR res: INTEGER);
+	PROCEDURE (r: Roster) Iq-(data: Items.Item; VAR res: LONGINT);
 	VAR n: Items.Item; a: Action; riq: RosterIq;
 	BEGIN
 		n:=data.First();

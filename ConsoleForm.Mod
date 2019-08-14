@@ -29,7 +29,7 @@ MODULE XmppConsoleForm;
 		String = ARRAY OF CHAR;
 		
 		UpdateMsg = RECORD (Views.Message)
-			type : INTEGER;
+			type : LONGINT;
 			session : Core.Session;
 			in, out : DynString;
 		END;
@@ -96,11 +96,11 @@ MODULE XmppConsoleForm;
 		END;
 	END Update;
 	
-	PROCEDURE Map(m : TextModels.Model; text : DynString; type : INTEGER);
+	PROCEDURE Map(m : TextModels.Model; text : DynString; type : LONGINT);
 	VAR f : TextMappers.Formatter; a : TextModels.Attributes; 
 		
 		PROCEDURE Write;
-		VAR i, j, level : INTEGER; tagClose : BOOLEAN;
+		VAR i, j, level : LONGINT; tagClose : BOOLEAN;
 		BEGIN
 			i:=0;  level:=0; j:=0; tagClose:=FALSE;
 			WHILE i<text.Length() DO
@@ -135,7 +135,7 @@ MODULE XmppConsoleForm;
 	END Map;
 	
 	PROCEDURE (v: View) Internalize (VAR rd: Stores.Reader);
-		VAR version: INTEGER;
+		VAR version: LONGINT;
 	BEGIN
 		rd.ReadVersion(minVersion, maxVersion, version);
 		IF ~rd.cancelled THEN
@@ -179,7 +179,7 @@ MODULE XmppConsoleForm;
 	(* GetNewFrame: wrapper uses standard frame *)
 	(* GetBackground: wrapper has no intrinsic background color *)
 
-	PROCEDURE (v: View) Restore (f: Views.Frame; l, t, r, b: INTEGER);
+	PROCEDURE (v: View) Restore (f: Views.Frame; l, t, r, b: LONGINT);
 	BEGIN
 		Views.InstallFrame(f, v.inner, 0, 0, 0, TRUE)	(* create and install wrapped view's frame *)
 	END Restore;

@@ -37,7 +37,7 @@ MODULE XmppByteStreams;
 		
 		ListenAction = POINTER TO RECORD(Services.Action)
 			host : Host;
-			failed : INTEGER;
+			failed : LONGINT;
 			iq : QueryIq;
 		END;
 				
@@ -82,7 +82,7 @@ MODULE XmppByteStreams;
 		WriteAction = POINTER TO RECORD(Services.Action)
 			rd : Files.Reader;
 			owner : Writer;
-			last : INTEGER;
+			last : LONGINT;
 		END;
 		
 		QueryIq = POINTER TO RECORD(Core.Iq)
@@ -105,14 +105,14 @@ MODULE XmppByteStreams;
 	PROCEDURE (s : Stream) ReaderClosed-(file : Files.File), NEW, ABSTRACT;
 	PROCEDURE (s : Stream) WriterClosed-, NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Done-, NEW, ABSTRACT;
-	PROCEDURE (s : Stream) Incoming-(VAR file : Files.File; OUT pos : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (s : Stream) Incoming-(VAR file : Files.File; OUT pos : LONGINT), NEW, ABSTRACT;
 	PROCEDURE (s : Stream) ReadBytes-(), NEW, ABSTRACT;
-	PROCEDURE (s : Stream) WroteBytes-(pos : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (s : Stream) WroteBytes-(pos : LONGINT), NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Ready-, NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Failed-, NEW, ABSTRACT;
 	PROCEDURE (h : Hook) NewStream-(bs : ByteStreams; from : ARRAY OF CHAR; VAR s : Stream), NEW, ABSTRACT;
-	PROCEDURE (h : Hook) Connect-(bs : ByteStreams; host : Host; OUT s : CommStreams.Stream; OUT res : INTEGER), NEW, ABSTRACT;
-	PROCEDURE (h : Hook) Bind-(bs : ByteStreams; host : Host; VAR l : CommStreams.Listener; OUT res : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (h : Hook) Connect-(bs : ByteStreams; host : Host; OUT s : CommStreams.Stream; OUT res : LONGINT), NEW, ABSTRACT;
+	PROCEDURE (h : Hook) Bind-(bs : ByteStreams; host : Host; VAR l : CommStreams.Listener; OUT res : LONGINT), NEW, ABSTRACT;
 	
 	PROCEDURE (q: Queue) Add(s : Stream), NEW; 
 	BEGIN
@@ -121,7 +121,7 @@ MODULE XmppByteStreams;
 	END Add;	
 	
 	PROCEDURE (q: Queue) Find(id : ARRAY OF CHAR): Stream, NEW; 
-	VAR i : INTEGER; ok : BOOLEAN;
+	VAR i : LONGINT; ok : BOOLEAN;
 	BEGIN
 		i:=0; ok:=FALSE;
 		WHILE (i<q.list.Length()) & ~ok DO
@@ -173,7 +173,7 @@ MODULE XmppByteStreams;
 	END Do;
 	
 	PROCEDURE (a : ListenAction) Do;
-	VAR  l: CommStreams.Listener; res : INTEGER;
+	VAR  l: CommStreams.Listener; res : LONGINT;
 	BEGIN
 		a.host.server.owner.owner.hook.Bind(a.host.server.owner.owner, a.host, l, res);
 		IF l#NIL THEN
@@ -188,7 +188,7 @@ MODULE XmppByteStreams;
 	END Do;
 	
 	PROCEDURE Incoming(s : Stream);
-	VAR file : Files.File; pos : INTEGER;
+	VAR file : Files.File; pos : LONGINT;
 	BEGIN
 		pos:=0;
 		s.Incoming(file, pos);
@@ -202,7 +202,7 @@ MODULE XmppByteStreams;
 	END ReadBytes;
 	
 	PROCEDURE (rd: Reader) Do;
-	VAR buf: ARRAY 65535 OF BYTE; read, res: INTEGER;
+	VAR buf: ARRAY 65535 OF BYTE; read, res: LONGINT;
 	BEGIN
 		IF rd.stream.IsConnected() THEN
 			rd.stream.ReadBytes(buf, 0, LEN(buf), read);
@@ -238,12 +238,12 @@ MODULE XmppByteStreams;
 		wr.owner.Done;
 	END Done;
 	
-	PROCEDURE (wr : Writer) WroteBytes(pos : INTEGER), NEW;
+	PROCEDURE (wr : Writer) WroteBytes(pos : LONGINT), NEW;
 	BEGIN
 		wr.owner.WroteBytes(pos);
 	END WroteBytes;
 	
-	PROCEDURE (wr: Writer) Write(file : Files.File; pos, len : INTEGER; OUT res : INTEGER), NEW;
+	PROCEDURE (wr: Writer) Write(file : Files.File; pos, len : LONGINT; OUT res : LONGINT), NEW;
 	VAR a : WriteAction; 
 	BEGIN
 		IF ~wr.busy THEN
@@ -259,7 +259,7 @@ MODULE XmppByteStreams;
 	END Write;
 	
 	PROCEDURE (a : WriteAction) Do;
-	VAR buf : ARRAY 65535 OF BYTE; lastPos, len, written : INTEGER;
+	VAR buf : ARRAY 65535 OF BYTE; lastPos, len, written : LONGINT;
 	BEGIN
 		IF a.owner.stream.IsConnected() THEN
 			IF a.rd.Pos()<a.last THEN
@@ -287,7 +287,7 @@ MODULE XmppByteStreams;
 	END NewHost;
 	
 	PROCEDURE (q : QueryIq) Do() : Items.Item;
-		VAR n, n1, n2: Items.Item; i : INTEGER;
+		VAR n, n1, n2: Items.Item; i : LONGINT;
 	BEGIN
 		n:=Items.New(Const.iq);
 		n1:=Items.New(query); n1.SetParam(Const.xmlns,urn);
@@ -371,20 +371,20 @@ MODULE XmppByteStreams;
 		s.hosts.Add(NewHost(jid, host, port));
 	END AddHost;
 	
-	PROCEDURE (s : Stream) GetHost*(index : INTEGER; OUT jid : ARRAY OF CHAR), NEW;
+	PROCEDURE (s : Stream) GetHost*(index : LONGINT; OUT jid : ARRAY OF CHAR), NEW;
 	BEGIN
 		ASSERT(s.hosts#NIL, 20);
 		ASSERT((index<s.hosts.Length()) & (index>=0), 21);
 		jid:=s.hosts.Item(index)(Host).jid$;
 	END GetHost;
 	
-	PROCEDURE (s : Stream) NofHosts*():INTEGER, NEW;
+	PROCEDURE (s : Stream) NofHosts*():LONGINT, NEW;
 	BEGIN
 		ASSERT(s.hosts#NIL, 20);
 		RETURN s.hosts.Length();
 	END NofHosts;
 
-	PROCEDURE (s : Stream) Write*(file : Files.File; start, len : INTEGER; OUT res : INTEGER), NEW;
+	PROCEDURE (s : Stream) Write*(file : Files.File; start, len : LONGINT; OUT res : LONGINT), NEW;
 	BEGIN
 		ASSERT(file#NIL, 20);
 		ASSERT((start>=0) & (start<file.Length()), 21);
@@ -392,8 +392,8 @@ MODULE XmppByteStreams;
 		IF s.wr#NIL THEN s.wr.Write(file, start, len, res) ELSE s.Failed END;
 	END Write;
 	
-	PROCEDURE CreateClient(to : ARRAY OF CHAR; s : Stream; OUT res : INTEGER);
-	VAR i : INTEGER; h : Host; str : CommStreams.Stream;
+	PROCEDURE CreateClient(to : ARRAY OF CHAR; s : Stream; OUT res : LONGINT);
+	VAR i : LONGINT; h : Host; str : CommStreams.Stream;
 	BEGIN
 		FOR i:=0 TO s.hosts.Length()-1 DO
 			h:=s.hosts.Item(i)(Host);
@@ -408,7 +408,7 @@ MODULE XmppByteStreams;
 	END CreateClient;
 	
 	PROCEDURE NewStream(bs : ByteStreams; qiq : QueryIq);
-	VAR s : Stream; hostJid : ARRAY 512 OF CHAR; res : INTEGER; aiq : AcceptIq; eiq : ErrorIq;
+	VAR s : Stream; hostJid : ARRAY 512 OF CHAR; res : LONGINT; aiq : AcceptIq; eiq : ErrorIq;
 	BEGIN
 		ASSERT(bs.hook#NIL);
 		bs.hook.NewStream(bs, qiq.from, s);
@@ -435,8 +435,8 @@ MODULE XmppByteStreams;
 		END;
 	END NewStream;
 	
-	PROCEDURE CreateListeners(from : ARRAY OF CHAR; s : Stream; qiq: QueryIq; res : INTEGER);
-	VAR i : INTEGER; h : Host; srv : Server; la : ListenAction;
+	PROCEDURE CreateListeners(from : ARRAY OF CHAR; s : Stream; qiq: QueryIq; res : LONGINT);
+	VAR i : LONGINT; h : Host; srv : Server; la : ListenAction;
 	BEGIN
 		FOR i:=0 TO s.hosts.Length()-1 DO
 			h:=s.hosts.Item(i)(Host);
@@ -449,7 +449,7 @@ MODULE XmppByteStreams;
 	END CreateListeners;
 	
 	PROCEDURE (bs : ByteStreams) CloseStream* (s : Stream), NEW;
-	VAR i : INTEGER;
+	VAR i : LONGINT;
 	BEGIN
 		ASSERT(s#NIL, 20);
 		IF (s.rd#NIL) & (s.rd.stream#NIL) THEN s.rd.stream.Close END;
@@ -467,7 +467,7 @@ MODULE XmppByteStreams;
 	END CloseStream;
 	
 	PROCEDURE (bs : ByteStreams) NewStream*(from, to : ARRAY OF CHAR; stream : Stream; mode : ARRAY OF CHAR) , NEW;
-	VAR qiq : QueryIq; res : INTEGER;
+	VAR qiq : QueryIq; res : LONGINT;
 	BEGIN
 		ASSERT(stream#NIL, 20);
 		ASSERT(from#'', 21);
@@ -499,7 +499,7 @@ MODULE XmppByteStreams;
 		IF s#NIL THEN s.Failed ELSE Log.Ln; Log.String('[XMPP] invalid bytestream') END
 	END StreamFailed;
 	
-	PROCEDURE (bs : ByteStreams) Iq-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (bs : ByteStreams) Iq-(data : Items.Item; VAR res : LONGINT);
 	VAR n : Items.Item; qiq : QueryIq; aiq : AcceptIq; eiq : ErrorIq;
 	BEGIN
 		IF (data.First()#NIL) THEN

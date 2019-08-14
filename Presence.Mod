@@ -49,7 +49,7 @@ MODULE XmppPresence;
 			owner-: Presence;
 			data-: Items.Item;
 			mucOpts*: MucOpts;
-			res*: INTEGER;
+			res*: LONGINT;
 		END;
 		
 		SessionIq = POINTER TO RECORD(Core.Iq) END;
@@ -60,17 +60,17 @@ MODULE XmppPresence;
 		
 		PresenceStanza = POINTER TO RECORD(Core.Presence)
 			show, status : POINTER TO ARRAY OF CHAR;
-			priority : INTEGER;
+			priority : LONGINT;
 			mo: MucOpts;
 		END;
 		
 	VAR
 		dir- : Directory;
-		priority*: INTEGER;
+		priority*: LONGINT;
 	
 	PROCEDURE (m: MucOpts) UserJid*(): POINTER TO ARRAY OF CHAR, NEW, ABSTRACT;
 		
-	PROCEDURE (h : Hook) Notify- (presence : Presence; type, from, show, status : ARRAY OF CHAR; priority : INTEGER; opts: Opts), NEW, ABSTRACT;
+	PROCEDURE (h : Hook) Notify- (presence : Presence; type, from, show, status : ARRAY OF CHAR; priority : LONGINT; opts: Opts), NEW, ABSTRACT;
 	
 	PROCEDURE Notify(p : Presence; ps : PresenceStanza);
 		VAR opts: Opts;
@@ -114,7 +114,7 @@ MODULE XmppPresence;
 	END Do;
 	
 	PROCEDURE (p : PresenceStanza) Use(data : Items.Item);
-	VAR n: Items.Item; res : INTEGER;
+	VAR n: Items.Item; res : LONGINT;
 	BEGIN
 		NEW(p.show, 1); NEW(p.status, 1);
 		n:=data.First();
@@ -131,7 +131,7 @@ MODULE XmppPresence;
 		END;
 	END Use;
 	
-	PROCEDURE (p : Presence) Set*(to, from, show, status : ARRAY OF CHAR; priority : INTEGER; type : ARRAY OF CHAR), NEW;
+	PROCEDURE (p : Presence) Set*(to, from, show, status : ARRAY OF CHAR; priority : LONGINT; type : ARRAY OF CHAR), NEW;
 	VAR ps : PresenceStanza; str : ARRAY 24 OF CHAR;
 	BEGIN
 		IF p.valid THEN
@@ -175,7 +175,7 @@ MODULE XmppPresence;
 		ELSE Log.Ln; Log.String('[XMPP] xmpp connection invalid') END
 	END Approve;
 	
-	PROCEDURE (p : Presence) Iq-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (p : Presence) Iq-(data : Items.Item; VAR res : LONGINT);
 	VAR n: Items.Item; siq : SessionIq;
 	BEGIN
 		n:=data.First();
@@ -192,7 +192,7 @@ MODULE XmppPresence;
 		res:=Core.continue;
 	END Iq;
 	
-	PROCEDURE (p : Presence) Presence-(data : Items.Item; VAR res : INTEGER);
+	PROCEDURE (p : Presence) Presence-(data : Items.Item; VAR res : LONGINT);
 		VAR ps : PresenceStanza; em: ExtendMucMsg; 
 	BEGIN
 		NEW(ps); ps.Init(data); 
@@ -232,7 +232,7 @@ MODULE XmppPresence;
 	END HandleBusMsg;
 	
 	PROCEDURE Init;
-	VAR d : Directory; res: INTEGER;
+	VAR d : Directory; res: LONGINT;
 	BEGIN
 		NEW(d);
 		dir:=d;

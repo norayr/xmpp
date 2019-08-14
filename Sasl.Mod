@@ -32,7 +32,7 @@ MODULE XmppSasl;
 		END;
 (********************************************************************************)
 	PROCEDURE (VAR D : Data) Fill* (s : DynString), NEW;
-	VAR i, res : INTEGER; nm : BOOLEAN; name, val : DynString;
+	VAR i, res : LONGINT; nm : BOOLEAN; name, val : DynString;
 		PROCEDURE Flush;
 		BEGIN
 			IF name.String()$=Const.saslNonce THEN D.nonce:=val.String()$
@@ -79,7 +79,7 @@ MODULE XmppSasl;
 	VAR A1, A2 : POINTER TO ARRAY OF SHORTCHAR; d1 : Md5.Digest;
 		
 		PROCEDURE H(IN x : ARRAY OF SHORTCHAR) : POINTER TO Md5.Digest;
-		VAR c : Md5.Context; y : POINTER TO Md5.Digest; i : INTEGER;
+		VAR c : Md5.Context; y : POINTER TO Md5.Digest; i : LONGINT;
 		BEGIN
 			c:=Md5.New(); i:=0; NEW(y);
 			WHILE x[i]#0X DO Md5.Write(c,x[i]); INC(i); END;
@@ -101,7 +101,7 @@ MODULE XmppSasl;
 		END HEX;
 		
 		PROCEDURE Short(IN x : ARRAY OF CHAR) : POINTER TO ARRAY OF SHORTCHAR;
-		VAR s : POINTER TO ARRAY OF SHORTCHAR; i : INTEGER;
+		VAR s : POINTER TO ARRAY OF SHORTCHAR; i : LONGINT;
 		BEGIN
 			NEW(s, LEN(x)); 
 			FOR i:=0 TO LEN(s)-1 DO s[i]:=SHORT(x[i]) END;

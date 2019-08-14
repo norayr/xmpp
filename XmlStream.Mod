@@ -25,8 +25,8 @@ MODULE XmppXmlStream;
 		Buffer = RECORD
 			queue: ListsIterable.Iterator;
 			this: BufferItem;
-			prev_ts, next_ts: LONGINT;
-			max, count: INTEGER;
+			prev_ts, next_ts: HUGEINT;
+			max, count: LONGINT;
 		END;
 		
 		Owner* = POINTER TO ABSTRACT RECORD END;
@@ -37,7 +37,7 @@ MODULE XmppXmlStream;
 			owner : Owner;
 			base : CommStreams.Stream;
 			readBuf, writeBuf : DynString;
-			limit: INTEGER;
+			limit: LONGINT;
 		END;
 		
 		Directory* = POINTER TO ABSTRACT RECORD END;
@@ -48,7 +48,7 @@ MODULE XmppXmlStream;
 		
 		StreamReader = POINTER TO RECORD (XmlcoreScanner.Reader) 
 			stream : Stream;
-			pos : INTEGER;
+			pos : LONGINT;
 			buf : DynString;
 			action : ReadAction;
 		END;
@@ -85,7 +85,7 @@ MODULE XmppXmlStream;
 (********************************************************************************)
 	PROCEDURE (o : Owner) Read-, NEW, ABSTRACT;
 	PROCEDURE (o : Owner) Write-, NEW, ABSTRACT;
-	PROCEDURE (o : Owner) Alert-(error : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (o : Owner) Alert-(error : LONGINT), NEW, ABSTRACT;
 
 	PROCEDURE (d : Directory) NewStream*(owner : Owner) : Stream, NEW, ABSTRACT;
 
@@ -95,10 +95,10 @@ MODULE XmppXmlStream;
 	PROCEDURE (s : Stream) WriteBuffer*() : POINTER TO ARRAY OF CHAR, NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Base*() : ANYPTR, NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Owner*() : Owner, NEW, ABSTRACT;
-	PROCEDURE (s : Stream) Init* (protocol, remoteAdr, localAdr : ARRAY OF CHAR; OUT res : INTEGER), NEW, ABSTRACT;
+	PROCEDURE (s : Stream) Init* (protocol, remoteAdr, localAdr : ARRAY OF CHAR; OUT res : LONGINT), NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Close*, NEW, ABSTRACT;
 	PROCEDURE (s : Stream) Raw*(raw : ARRAY OF CHAR), NEW, ABSTRACT;
-	PROCEDURE (s : Stream) Limit* (max: INTEGER), NEW, ABSTRACT;
+	PROCEDURE (s : Stream) Limit* (max: LONGINT), NEW, ABSTRACT;
 	
 	PROCEDURE (s : StdStream) SetReadBuffer-(buffer : ARRAY OF CHAR);
 	BEGIN
@@ -130,7 +130,7 @@ MODULE XmppXmlStream;
 		RETURN s.owner;
 	END Owner;
 	
-	PROCEDURE (s : StdStream) Init (protocol, remoteAdr, localAdr : ARRAY OF CHAR; OUT res : INTEGER);
+	PROCEDURE (s : StdStream) Init (protocol, remoteAdr, localAdr : ARRAY OF CHAR; OUT res : LONGINT);
 	VAR a : AlertAction;
 	BEGIN
 		CommStreams.NewStream(protocol, localAdr, remoteAdr, s.base, res);
@@ -154,13 +154,13 @@ MODULE XmppXmlStream;
 		NEW(a); a.buf:=s.writeBuf; a.stream:=s; Services.DoLater(a, Services.now);
 	END Raw;
 	
-	PROCEDURE (s: StdStream) Limit (max: INTEGER);
+	PROCEDURE (s: StdStream) Limit (max: LONGINT);
 	BEGIN
 		s.limit:=max;
 	END Limit;
 	
 	(* ???? ? ??????? *)
-	PROCEDURE (VAR b: Buffer) Limit(max: INTEGER), NEW;
+	PROCEDURE (VAR b: Buffer) Limit(max: LONGINT), NEW;
 	BEGIN
 		b.max:=max;
 		IF max=0 THEN b.next_ts:=0; b.prev_ts:=0; ELSE b.prev_ts:=Services.Ticks(); b.next_ts:=Services.Ticks() END
@@ -181,7 +181,7 @@ MODULE XmppXmlStream;
 	END Drop;
 		
 	PROCEDURE (VAR b: Buffer) Inc, NEW;
-		VAR x: ANYPTR; len: INTEGER; i: BufferItem;
+		VAR x: ANYPTR; len: LONGINT; i: BufferItem;
 	BEGIN
 		len:=b.this.s.Length();
 		 IF (len>0) & (len<=b.max) THEN
@@ -198,7 +198,7 @@ MODULE XmppXmlStream;
 	PROCEDURE (VAR b: Buffer) Get(): DynString, NEW;
 		VAR x: ANYPTR; res: DynString;
 		
-		PROCEDURE Next(len: INTEGER);
+		PROCEDURE Next(len: LONGINT);
 		BEGIN
 			INC(b.count, len);
 			IF b.Limited() & (len>b.max) THEN 
@@ -247,8 +247,8 @@ MODULE XmppXmlStream;
 		stream.Owner().Write;
 	END SendTransmitMsg;
 	
-	PROCEDURE ConvertToByte(str : DynString; VAR x : ABYTE; OUT len : INTEGER);
-	VAR pos : INTEGER; ch : CHAR;
+	PROCEDURE ConvertToByte(str : DynString; VAR x : ABYTE; OUT len : LONGINT);
+	VAR pos : LONGINT; ch : CHAR;
 	BEGIN	(* UTF-8 format *)
 		pos:=0; len:=0;
 		WHILE (pos<str.Length()) DO
@@ -267,8 +267,8 @@ MODULE XmppXmlStream;
 		END;
 	END ConvertToByte;
 	
-	PROCEDURE ConvertFromByte(VAR x : ABYTE; str : DynString; len : INTEGER);
-	VAR c1, c2, c3: BYTE; ch : CHAR; pos : INTEGER;
+	PROCEDURE ConvertFromByte(VAR x : ABYTE; str : DynString; len : LONGINT);
+	VAR c1, c2, c3: BYTE; ch : CHAR; pos : LONGINT;
 	BEGIN
 		ASSERT(str#NIL); 
 		pos:=0; 
@@ -288,7 +288,7 @@ MODULE XmppXmlStream;
 	END ConvertFromByte;
 	
 	PROCEDURE (a : WriteAction) Do;
-		VAR tmp: DynString; buf : ABYTE; len, written, i : INTEGER; 
+		VAR tmp: DynString; buf : ABYTE; len, written, i : LONGINT; 
 	BEGIN
 		len:=0; written:=0;
 		IF a.wr.stream.Base()(CommStreams.Stream).IsConnected() THEN
@@ -309,7 +309,7 @@ MODULE XmppXmlStream;
 	END Do;
 	
 	PROCEDURE (a : ReadAction) Do;
-	VAR buf : ABYTE; x : DynString; len, written, read, i : INTEGER; 
+	VAR buf : ABYTE; x : DynString; len, written, read, i : LONGINT; 
 	BEGIN
 		read:=0; len:=0;
 		IF a.rd.stream.Base()(CommStreams.Stream).IsConnected() THEN
@@ -351,7 +351,7 @@ MODULE XmppXmlStream;
 		INC(rd.pos);
 	END ReadChar;
 
-	PROCEDURE (rd : StreamReader) SetPos(pos : INTEGER);
+	PROCEDURE (rd : StreamReader) SetPos(pos : LONGINT);
 	BEGIN
 		rd.pos:=pos;
 	END SetPos;
@@ -386,7 +386,7 @@ MODULE XmppXmlStream;
 	END Char;
 	
 	PROCEDURE (wr: StreamWriter) String (IN str: ARRAY OF CHAR);
-		VAR i: INTEGER; ch: CHAR;
+		VAR i: LONGINT; ch: CHAR;
 	BEGIN
 		i := 0; ch := str[0];
 		WHILE ch # 0X DO wr.Char(ch); INC(i); ch := str[i] END
@@ -432,7 +432,7 @@ MODULE XmppXmlStream;
 	END Do;
 	
 	PROCEDURE (a : RawAction) Do;
-	VAR buf : ABYTE; len, written, i : INTEGER;
+	VAR buf : ABYTE; len, written, i : LONGINT;
 	BEGIN
 		IF a.stream.Base()(CommStreams.Stream).IsConnected() THEN
 			ConvertToByte(a.buf, buf, len);

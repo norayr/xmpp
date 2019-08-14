@@ -37,7 +37,7 @@ MODULE XmppMuc;
 		RETURN m
 	END NewOpts;
 
-	PROCEDURE ScanPresence (p: It.Item; OUT res: INTEGER): MucOpts;
+	PROCEDURE ScanPresence (p: It.Item; OUT res: LONGINT): MucOpts;
 		VAR m: MucOpts; x, i: It.Item; urn: ARRAY 127 OF CHAR;
 	BEGIN
 		res := Pr.empty;
