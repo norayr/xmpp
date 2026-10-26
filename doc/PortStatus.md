@@ -55,8 +55,9 @@ The client now connects through VOC networking/TLS, requires certificate
 verification, restarts streams after TLS/SASL, binds a resource and delivers
 online stanzas. Offline and local-server tests cover that lifecycle, including
 Unicode service domains and A-label certificate identities. Live-server coverage
-includes a UTF-8 (Armenian language) account and domain, verified STARTTLS, PLAIN login,
-Unicode resource binding, a Unicode self-message round trip and orderly closure.
+includes a UTF-8 (Armenian language) account and domain, verified STARTTLS,
+PLAIN login, Unicode resource binding, a Unicode self-message round trip and
+orderly closure.
 The next stages adapt the original extension/IQ dispatch, roster/discovery/
 presence behavior, scheduling and remaining authentication functionality.
 Broader interoperability, full username/resource preparation and adversarial

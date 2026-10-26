@@ -1,0 +1,102 @@
+[
+  {
+    "kind": "mercurial",
+    "source": "ea78c0bcd2ad58d8d89c6be89fc0420a2da85524",
+    "git": "7fac659edd7565f4f914edc201b0b1ea48820ce2"
+  },
+  {
+    "kind": "mercurial",
+    "source": "f3fea8e16b91dd7fccf326a9204e525571cd98b3",
+    "git": "be48792e2318bd603dc9208284405a649bde6fbf"
+  },
+  {
+    "kind": "mercurial",
+    "source": "2b704716c82ff13057605eef544274bd6ccfb261",
+    "git": "0256dc479061e63f5975c4f34236f4f0d541c57b"
+  },
+  {
+    "kind": "mercurial",
+    "source": "1e78fd5f40e3bddc356eed293b661f0b81c0e3df",
+    "git": "4ee9172300c62816430bf4954677a6ee8b74d641"
+  },
+  {
+    "kind": "mercurial",
+    "source": "0c1de13e580bfedb45c20eb1ba82fd8f6050c254",
+    "git": "4153b4d00935ed0ca3405769fc174cc4ffd63874"
+  },
+  {
+    "kind": "mercurial",
+    "source": "0be08e32dc39dec48d28af9688130687e34cbd36",
+    "git": "aed1a2df97b513c7a1ef757de52ad28d3741f21f"
+  },
+  {
+    "kind": "mercurial",
+    "source": "46f1f6803c94fea48d1d5adb573ed216cb158cac",
+    "git": "8bbe653c4fd6c446c5ab84796ee4689fdb64b3ef"
+  },
+  {
+    "kind": "mercurial",
+    "source": "100501799c3c2e88518e21cacd6d244f3837a230",
+    "git": "a5711ae9656b1a4f64e6b1d4172704835b0bae9f"
+  },
+  {
+    "kind": "mercurial",
+    "source": "6879f2a3c484a82518a563c0e7b94d884f8c4211",
+    "git": "a68d42643a3565463e741146bdb95f5ab5e7f7db"
+  },
+  {
+    "kind": "mercurial",
+    "source": "b4acd43612af246330f3a0243da0151500acdf6d",
+    "git": "6c3c4eafb094334218871352c71805d4e3c60c69"
+  },
+  {
+    "kind": "mercurial",
+    "source": "6305b4ffe40c0ccf232d85bffdbe7b07f571b133",
+    "git": "0d18ad92efaf13c28c1ad62c2b1d7e53cb227de8"
+  },
+  {
+    "kind": "mercurial",
+    "source": "09603c8c9c70d51c643d8d60fd5961d6ec11d56a",
+    "git": "5a47748d6bada453109015afc2298ae7139f3a64"
+  },
+  {
+    "kind": "mercurial",
+    "source": "f5032388cb47bad006b5b97aeddc67fae59b5ebd",
+    "git": "588cb5fd994e5cf73146f5683c77b43f51b798ff"
+  },
+  {
+    "kind": "mercurial",
+    "source": "61608fcd3235855d1db556a760e433254c8a6482",
+    "git": "a6b8440cf83763989055b6a78cda4c65f9a0dc2c"
+  },
+  {
+    "kind": "mercurial",
+    "source": "a2cde5435bea63de16239c2c31e399ad0fd43ad2",
+    "git": "a85771dddceb27c3ca9ad637eabdc5c502adc514"
+  },
+  {
+    "kind": "git",
+    "source": "790072d8de1d3d0f986c3e3da4c333ce682411d4",
+    "git": "ccc8851a88f2933b98db1d406abc8dac61be29e3"
+  },
+  {
+    "kind": "git",
+    "source": "b34f70b09f83cf346c21471d4dd979a7f7930f7c",
+    "git": "7f66817b0246c29c366e71b4bf36571bf58f19c6"
+  },
+  {
+    "kind": "git",
+    "source": "c751ca317fe56dbbb41ca842b4ec9f53cd23f058",
+    "git": "4333fdb822b0605496f1daa2e142033704e08884"
+  },
+  {
+    "kind": "git",
+    "source": "b2287d9b8452d5b1e5ba2fd727f08640f912a3a6",
+    "git": "6fc5e15aa5bfd1162dda5d2c91d53c6002486f17"
+  },
+  {
+    "kind": "git",
+    "source": "0141aba660cfcf01f81b49cd1a645d7bb2e9a26c",
+    "git": "c5ec3febace95de2fca91ed69afe720e56502333"
+  }
+]

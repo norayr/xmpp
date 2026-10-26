@@ -11,9 +11,9 @@ names. The makefile builds the current modules.
 ## Status
 
 Login, binding and a Unicode self-message round trip have been tested against a
-live server with an Armenian account and domain. The original extension dispatch,
-roster, discovery, file transfers, scheduling and DIGEST-MD5 authentication still
-need porting. Applications currently drive the synchronous client with `Start`,
+live server with a UTF-8 (Armenian language) account and domain. The original
+extension dispatch, roster, discovery, file transfers, scheduling and DIGEST-MD5
+authentication still need porting. Applications currently drive the synchronous client with `Start`,
 `Step`, `Send` and `Close`.
 
 ## Build
@@ -64,11 +64,21 @@ Security review is ongoing; use trusted XML during development.
 
 ## Sources
 
+The original BlackBox component is by Pyotr Mikhailovich Kushnir (Пётр
+Михайлович Кушнир). OberonCore's [component page](https://oberoncore.ru/bbcc/subs/xmpp/start)
+and [forum announcement](https://forum.oberoncore.ru/viewtopic.php?f=90&t=1104)
+identify its author. The Git history contains the 15 recovered Mercurial
+changesets from 2011–2015, followed by Norayr Chilingarian's five VOC porting
+commits from 14 August 2019 and the current port. See [the history record](doc/History.md)
+for the archived repository, conversion checks and original commit IDs.
+
 `upstream/` preserves the supplied Component Pascal snapshot at revision
 `a2cde5435bea63de16239c2c31e399ad0fd43ad2`: 88 files, including 31 paired
 `.txt`/`.odc` modules. Its manifest records sizes and SHA-256 hashes. The `.odc`
 documents retain Unicode text that was lost in some text exports. Original
-notices are retained; the supplied subsystem has no explicit license grant.
+notices are retained. Some headers refer to `Docu/BB-License`, but that document
+is absent from the recovered history and supplied snapshot; licensing confirmation
+is still needed.
 
 VOC carries the native modules under `src/ports/xmpp/`; reusable Unicode,
 strings, channels, URI and IDNA modules stay in VOC's shared ooc package.

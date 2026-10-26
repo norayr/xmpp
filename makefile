@@ -29,7 +29,7 @@ network-dependencies:
 endif
 
 .DEFAULT_GOAL := all
-.PHONY: all test network network-test probe tls-regression clean
+.PHONY: all test history-test network network-test probe tls-regression clean
 all: dependencies
 	cd "$(BUILD)" && for name in $(MODULES); do \
 		$(VOC) $(OFLAGS) "$(SOURCE)/src/$$name.Mod" || exit; \
@@ -39,6 +39,8 @@ test: all
 	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient; do \
 		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout 30 "./$$name" || exit; \
 	done
+history-test:
+	python3 "$(SOURCE)/tests/check-history.py"
 network: all
 	@test "$$(uname -s)" = Linux || { echo "The XMPP TCP/TLS driver currently requires Linux."; exit 1; }
 	$(MAKE) network-dependencies

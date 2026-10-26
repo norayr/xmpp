@@ -1,0 +1,34 @@
+{
+  "origin": "https://bitbucket.org/oberoncore/xmpp",
+  "archived_clone": "https://web.archive.org/web/20200615162225id_/https://bitbucket.org/oberoncore/xmpp?cmd=getbundle",
+  "wire_sha256": "6560f67fef213e7e1961310c93ed2d5ba2851fdde8d727e59d192f205d88ffab",
+  "encoding": "zlib-compressed Mercurial HG20 stream-clone bundle",
+  "first_revision": "ea78c0bcd2ad58d8d89c6be89fc0420a2da85524",
+  "last_revision": "a2cde5435bea63de16239c2c31e399ad0fd43ad2",
+  "changesets": 15,
+  "file_revisions": 146,
+  "historical_file_paths": 114,
+  "branches": [
+    "default"
+  ],
+  "release_tags": [],
+  "bundles": [
+    {
+      "file": "oberoncore-xmpp.hg",
+      "bytes": 394369,
+      "sha256": "3d93ad7d33194f76dc26f0d1268e48609beaf751eb7985a56a1aeaa87d94c490"
+    },
+    {
+      "file": "voc-before-mercurial.bundle",
+      "bytes": 74217,
+      "sha256": "4149f68792c6a3992d6e263550ba9c9bc008f7db347715dd684c25f1e266e001"
+    }
+  ],
+  "matching_snapshot_files": 55,
+  "snapshot_differences": {
+    "Mod/Basic.odc": {
+      "mercurial_sha256": "37967f4704764a4dc1a37a84bc520f7d74a91d4e96f1d3973df4460382eafc83",
+      "supplied_sha256": "a6a19481ad509dab71047e092719e10cc3755e223b059f827b4521cf359e32f7"
+    }
+  }
+}

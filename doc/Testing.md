@@ -12,6 +12,10 @@ They include 232 input split sizes, a 40,002-code-unit message and 665
 TLS/SASL/binding negotiation checks. The snapshot check verifies all 88
 preserved upstream files by size and SHA-256.
 
+In the standalone checkout, `make history-test` restores and verifies the
+preserved Mercurial repository and checks the imported Git history. See
+[the history record](History.md) for source revisions and the conversion checks.
+
 Twenty Python/OpenSSL loopback cases cover STARTTLS, direct TLS, Unicode
 credentials, messages and domains, certificate and protocol-version rejection,
 binding failures and stalled reads/handshakes. The shared IDNA suite has 38
