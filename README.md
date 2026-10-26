@@ -2,7 +2,8 @@
 
 An Oberon-2 XMPP library using ooc-xml for XML streams and VOC's TCP/TLS modules
 for connections. It handles Unicode JIDs and messages, STARTTLS or direct TLS,
-SASL PLAIN authentication, resource binding and incoming/outgoing stanzas.
+SASL PLAIN authentication, resource binding, incoming/outgoing stanzas and
+bounded IQ requests with ping, software version and service discovery.
 
 This continues the VOC port started here in 2019. The current implementation is
 in `src/Xmpp*.Mod`; the earlier sources remain in `src/` under their original
@@ -12,8 +13,9 @@ names. The makefile builds the current modules.
 
 Login, binding and a Unicode self-message round trip have been tested against a
 live server with a UTF-8 (Armenian language) account and domain. The original
-extension dispatch, roster, discovery, file transfers, scheduling and DIGEST-MD5
-authentication still need porting. Applications currently drive the synchronous client with `Start`,
+roster, file transfers, scheduling and DIGEST-MD5 authentication still need
+porting. IQ extensions use explicit registration and bounded request correlation.
+Applications drive the synchronous client with `Start`,
 `Step`, `Send` and `Close`.
 
 ## Build
@@ -34,10 +36,8 @@ Set `VOCSRC=/path/to/compiler` if the VOC checkout is elsewhere. Output goes int
 source checkout, the build uses installed dependencies, which must include
 `XMLStream`, `IDNA` and `TLS13Live.Start` for the network target.
 
-The offline target builds the portable library. Network targets require Linux,
-libidn2 development files and `pkg-config`. Loopback tests need Python 3.13+ and
-OpenSSL. Programs linking `XmppTCP` need
-`LDLIBS="$(pkg-config --libs libidn2)"` when invoking VOC.
+The offline target builds the portable library. Network targets require Linux.
+Loopback tests need Python 3.13+ and OpenSSL.
 
 ## Use
 
@@ -52,12 +52,15 @@ network buffers use UTF-8. `XmppItems.UTF8` and `UTF8Bytes` convert between them
 
 Domains such as `ծոց.հայ` can be passed directly. XML stream identities remain
 Unicode; DNS, TLS SNI and certificate matching use the corresponding A-labels.
-This version uses libidn2 for domain normalization and validation.
+VOC's native domain-name modules provide non-transitional UTS #46 mapping,
+Unicode 16.0 NFC and IDNA2008 validation.
 
 `XmppProbe` reads a password from standard input and can send a test message
 to its own bound resource. See [client setup](doc/Client.md), [test coverage](doc/Testing.md)
 and [the port inventory](doc/PortStatus.md). XML framing is described in
 [the ooc-xml streaming documentation](https://github.com/norayr/voc-ooc-xml/blob/main/doc/Streaming.md).
+
+See [IQ extensions](doc/IQ.md) for handler setup, reply matching and deadlines.
 
 Offline, loopback and shared-TLS tests pass with GCC, Clang, TCC and ASan/UBSan.
 Security review is ongoing; use trusted XML during development.
@@ -79,6 +82,3 @@ documents retain Unicode text that was lost in some text exports. Original
 notices are retained. Some headers refer to `Docu/BB-License`, but that document
 is absent from the recovered history and supplied snapshot; licensing confirmation
 is still needed.
-
-VOC carries the native modules under `src/ports/xmpp/`; reusable Unicode,
-strings, channels, URI and IDNA modules stay in VOC's shared ooc package.

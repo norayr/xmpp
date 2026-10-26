@@ -5,9 +5,8 @@ VOCSRC ?= $(abspath $(SOURCE)/../compiler)
 BUILD ?= $(SOURCE)/build/2
 BUILD := $(abspath $(BUILD))
 MODULES := XmppTypes XmppConst XmppItems XmppXmlStream XmppXmlGen XmppConnections \
- XmppStrings XmppCore XmppMessenger XmppPresence XmppWire XmppSasl XmppClient
-PKG_CONFIG ?= pkg-config
-IDNA_LIBS ?= $(shell $(PKG_CONFIG) --libs libidn2)
+ XmppStrings XmppCore XmppMessenger XmppPresence XmppWire XmppSasl XmppClient \
+ XmppIQ XmppPing XmppVersion XmppDisco
 NETWORK_CFLAGS = $(CFLAGS) -D_DEFAULT_SOURCE
 
 ifneq ($(wildcard $(VOCSRC)/src/tools/make/modular-libraries.mk),)
@@ -16,6 +15,7 @@ NETWORK_MODULES := $(MODULAR_INTERNET) $(filter-out norayr/tls/httpsPure,$(MODUL
 .PHONY: dependencies network-dependencies
 dependencies:
 	$(MAKE) -C "$(VOCSRC)/src/ports/xml" BUILD="$(BUILD)" VOC="$(VOC)" all
+	$(MAKE) -C "$(VOCSRC)/src/ports/punycode" BUILD="$(BUILD)" VOC="$(VOC)" all
 network-dependencies:
 	$(MAKE) -C "$(VOCSRC)/src/ports/ooc" BUILD="$(BUILD)" VOC="$(VOC)" idna
 	cd "$(BUILD)" && for name in $(NETWORK_MODULES); do \
@@ -36,7 +36,7 @@ all: dependencies
 	done
 test: all
 	python3 "$(SOURCE)/tests/check-upstream.py"
-	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient; do \
+	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ; do \
 		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout 30 "./$$name" || exit; \
 	done
 history-test:
@@ -46,10 +46,10 @@ network: all
 	$(MAKE) network-dependencies
 	cd "$(BUILD)" && $(VOC) $(OFLAGS) "$(SOURCE)/src/XmppTCP.Mod"
 network-test: network
-	cd "$(BUILD)" && LDLIBS="$(LDLIBS) $(IDNA_LIBS)" $(VOC) $(OFLAGS) -m "$(SOURCE)/tests/TestXmppNetwork.Mod"
+	cd "$(BUILD)" && $(VOC) $(OFLAGS) -m "$(SOURCE)/tests/TestXmppNetwork.Mod"
 	python3 "$(SOURCE)/tests/loopback.py" "$(BUILD)"
 probe: network
-	cd "$(BUILD)" && LDLIBS="$(LDLIBS) $(IDNA_LIBS)" $(VOC) $(OFLAGS) -m "$(SOURCE)/tools/XmppProbe.Mod"
+	cd "$(BUILD)" && $(VOC) $(OFLAGS) -m "$(SOURCE)/tools/XmppProbe.Mod"
 tls-regression: network
 	@test -d "$(VOCSRC)/src/test/ports" || { echo "tls-regression requires VOCSRC to name a VOC checkout."; exit 1; }
 	cd "$(BUILD)" && for name in norayr/strutils/strTypes norayr/strutils/strUtils \
@@ -59,5 +59,5 @@ tls-regression: network
 	cd "$(VOCSRC)/src/test/ports" && sh ./tls/test.sh "$(VOC)" "$(BUILD)" 2 "-sFm"
 	cd "$(VOCSRC)/src/test/ports" && sh ./gemini/test.sh "$(VOC)" "$(BUILD)" 2 "-sFm"
 clean:
-	rm -f $(foreach name,$(MODULES) XmppTCP XmppProbe TestXmppStream TestXmppCore TestXmppClient TestXmppNetwork,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) \
-		"$(BUILD)/TestXmppStream" "$(BUILD)/TestXmppCore" "$(BUILD)/TestXmppClient" "$(BUILD)/TestXmppNetwork" "$(BUILD)/XmppProbe"
+	rm -f $(foreach name,$(MODULES) XmppTCP XmppProbe TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppNetwork,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) \
+		"$(BUILD)/TestXmppStream" "$(BUILD)/TestXmppCore" "$(BUILD)/TestXmppClient" "$(BUILD)/TestXmppIQ" "$(BUILD)/TestXmppNetwork" "$(BUILD)/XmppProbe"
