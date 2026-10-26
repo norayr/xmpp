@@ -5,8 +5,8 @@ VOCSRC ?= $(abspath $(SOURCE)/../compiler)
 BUILD ?= $(SOURCE)/build/2
 BUILD := $(abspath $(BUILD))
 MODULES := XmppTypes XmppConst XmppItems XmppXmlStream XmppXmlGen XmppConnections \
- XmppStrings XmppCore XmppMessenger XmppPresence XmppWire XmppSasl XmppClient \
- XmppIQ XmppPing XmppVersion XmppDisco XmppRoster XmppPubSub
+ XmppStrings XmppCore XmppMessenger XmppWire XmppSasl XmppClient \
+ XmppIQ XmppPresence XmppPresenceTracker XmppPing XmppVersion XmppDisco XmppRoster XmppPubSub
 NETWORK_CFLAGS = $(CFLAGS) -D_DEFAULT_SOURCE
 
 ifneq ($(wildcard $(VOCSRC)/src/tools/make/modular-libraries.mk),)
@@ -36,7 +36,7 @@ all: dependencies
 	done
 test: all
 	python3 "$(SOURCE)/tests/check-upstream.py"
-	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRosterPubSub; do \
+	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRosterPubSub TestXmppPresence; do \
 		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout 30 "./$$name" || exit; \
 	done
 history-test:
@@ -59,5 +59,5 @@ tls-regression: network
 	cd "$(VOCSRC)/src/test/ports" && sh ./tls/test.sh "$(VOC)" "$(BUILD)" 2 "-sFm"
 	cd "$(VOCSRC)/src/test/ports" && sh ./gemini/test.sh "$(VOC)" "$(BUILD)" 2 "-sFm"
 clean:
-	rm -f $(foreach name,$(MODULES) XmppTCP XmppProbe TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRosterPubSub TestXmppNetwork,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) \
-		"$(BUILD)/TestXmppStream" "$(BUILD)/TestXmppCore" "$(BUILD)/TestXmppClient" "$(BUILD)/TestXmppIQ" "$(BUILD)/TestXmppRosterPubSub" "$(BUILD)/TestXmppNetwork" "$(BUILD)/XmppProbe"
+	rm -f $(foreach name,$(MODULES) XmppTCP XmppProbe TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRosterPubSub TestXmppPresence TestXmppNetwork,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) \
+		"$(BUILD)/TestXmppStream" "$(BUILD)/TestXmppCore" "$(BUILD)/TestXmppClient" "$(BUILD)/TestXmppIQ" "$(BUILD)/TestXmppRosterPubSub" "$(BUILD)/TestXmppPresence" "$(BUILD)/TestXmppNetwork" "$(BUILD)/XmppProbe"
