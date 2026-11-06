@@ -4,9 +4,9 @@ SOURCE := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
 VOCSRC ?= $(abspath $(SOURCE)/../compiler)
 BUILD ?= $(SOURCE)/build/2
 BUILD := $(abspath $(BUILD))
-MODULES := XmppTypes XmppConst XmppItems XmppXmlStream XmppXmlGen XmppConnections \
+MODULES := XmppTypes XmppConst XmppItems XmppBase64 XmppXmlStream XmppXmlGen XmppConnections \
  XmppStrings XmppCore XmppMessenger XmppWire XmppSasl XmppClient \
- XmppIQ XmppPresence XmppPresenceTracker XmppMuc XmppPing XmppVersion XmppDisco XmppRoster XmppPubSub
+ XmppIQ XmppIbb XmppIbbTransfer XmppRegister XmppPresence XmppPresenceTracker XmppMuc XmppMucTracker XmppPing XmppVersion XmppDisco XmppRoster XmppPubSub
 NETWORK_CFLAGS = $(CFLAGS) -D_DEFAULT_SOURCE
 
 ifneq ($(wildcard $(VOCSRC)/src/tools/make/modular-libraries.mk),)
@@ -36,8 +36,9 @@ all: dependencies
 	done
 test: all
 	python3 "$(SOURCE)/tests/check-upstream.py"
-	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRosterPubSub TestXmppPresence TestXmppMuc; do \
-		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout 30 "./$$name" || exit; \
+	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppIbb TestXmppIbbTransfer TestXmppRegister TestXmppRosterPubSub TestXmppPresence TestXmppMuc TestXmppMucTracker; do \
+		limit=30; [ "$$name" != TestXmppIbbTransfer ] || limit=120; \
+		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout $$limit "./$$name" || exit; \
 	done
 history-test:
 	python3 "$(SOURCE)/tests/check-history.py"
@@ -48,6 +49,8 @@ network: all
 network-test: network
 	cd "$(BUILD)" && $(VOC) $(OFLAGS) -m "$(SOURCE)/tests/TestXmppNetwork.Mod"
 	python3 "$(SOURCE)/tests/loopback.py" "$(BUILD)"
+	cd "$(BUILD)" && $(VOC) $(OFLAGS) -m "$(SOURCE)/tests/TestXmppRegisterNetwork.Mod"
+	python3 "$(SOURCE)/tests/registration-loopback.py" "$(BUILD)"
 probe: network
 	cd "$(BUILD)" && $(VOC) $(OFLAGS) -m "$(SOURCE)/tools/XmppProbe.Mod"
 tls-regression: network
@@ -59,5 +62,6 @@ tls-regression: network
 	cd "$(VOCSRC)/src/test/ports" && sh ./tls/test.sh "$(VOC)" "$(BUILD)" 2 "-sFm"
 	cd "$(VOCSRC)/src/test/ports" && sh ./gemini/test.sh "$(VOC)" "$(BUILD)" 2 "-sFm"
 clean:
-	rm -f $(foreach name,$(MODULES) XmppTCP XmppProbe TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRosterPubSub TestXmppPresence TestXmppMuc TestXmppNetwork,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) \
-		"$(BUILD)/TestXmppStream" "$(BUILD)/TestXmppCore" "$(BUILD)/TestXmppClient" "$(BUILD)/TestXmppIQ" "$(BUILD)/TestXmppRosterPubSub" "$(BUILD)/TestXmppPresence" "$(BUILD)/TestXmppMuc" "$(BUILD)/TestXmppNetwork" "$(BUILD)/XmppProbe"
+	rm -f $(foreach name,TestXmppIbb TestXmppIbbTransfer,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) "$(BUILD)/TestXmppIbb" "$(BUILD)/TestXmppIbbTransfer"
+	rm -f $(foreach name,$(MODULES) XmppTCP XmppProbe TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppRegister TestXmppRosterPubSub TestXmppPresence TestXmppMuc TestXmppMucTracker TestXmppNetwork TestXmppRegisterNetwork,$(foreach ext,c h o sym,"$(BUILD)/$(name).$(ext)")) \
+		"$(BUILD)/TestXmppStream" "$(BUILD)/TestXmppCore" "$(BUILD)/TestXmppClient" "$(BUILD)/TestXmppIQ" "$(BUILD)/TestXmppRegister" "$(BUILD)/TestXmppRosterPubSub" "$(BUILD)/TestXmppPresence" "$(BUILD)/TestXmppMuc" "$(BUILD)/TestXmppMucTracker" "$(BUILD)/TestXmppNetwork" "$(BUILD)/TestXmppRegisterNetwork" "$(BUILD)/XmppProbe"
