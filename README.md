@@ -89,6 +89,8 @@ See [file reception](doc/FileReceiver.md) for asynchronous consent and negotiate
 See [file sending](doc/FileSender.md) for offer/source binding and selected outgoing ranges.
 See [bytestream foundations](doc/ByteStreams.md) for host selection, destination
 hashes and nonblocking Linux SOCKS5 client negotiation.
+See [caller-driven connections](doc/AsyncClient.md) for bounded nonblocking TCP/TLS
+and feeding XMPP negotiation from an event loop.
 
 [Barev for libpurple](https://github.com/norayr/barev-purple-oberon) uses the
 installed XML stream, item and UTF-8 serialization interfaces for direct peer
