@@ -37,8 +37,7 @@ all: dependencies
 test: all
 	python3 "$(SOURCE)/tests/check-upstream.py"
 	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppIbb TestXmppIbbTransfer TestXmppStreamInit TestXmppFileReceiver TestXmppRegister TestXmppRosterPubSub TestXmppPresence TestXmppMuc TestXmppMucTracker; do \
-		limit=30; [ "$$name" != TestXmppIbbTransfer ] || limit=120; \
-		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout $$limit "./$$name" || exit; \
+		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout 30 "./$$name" || exit; \
 	done
 history-test:
 	python3 "$(SOURCE)/tests/check-history.py"
