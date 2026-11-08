@@ -6,7 +6,7 @@ BUILD ?= $(SOURCE)/build/2
 BUILD := $(abspath $(BUILD))
 MODULES := XmppTypes XmppConst XmppItems XmppBase64 XmppXmlStream XmppXmlGen XmppConnections \
  XmppStrings XmppCore XmppMessenger XmppWire XmppSasl XmppClient \
- XmppIQ XmppIbb XmppIbbTransfer XmppStreamInit XmppFileReceiver XmppFileSender XmppRegister XmppPresence XmppPresenceTracker XmppMuc XmppMucTracker XmppPing XmppVersion XmppDisco XmppRoster XmppPubSub
+ XmppIQ XmppIbb XmppByteStreams XmppSocks5 XmppIbbTransfer XmppStreamInit XmppFileReceiver XmppFileSender XmppRegister XmppPresence XmppPresenceTracker XmppMuc XmppMucTracker XmppPing XmppVersion XmppDisco XmppRoster XmppPubSub
 NETWORK_CFLAGS = $(CFLAGS) -D_DEFAULT_SOURCE
 
 ifneq ($(wildcard $(VOCSRC)/src/tools/make/modular-libraries.mk),)
@@ -36,7 +36,7 @@ all: dependencies
 	done
 test: all
 	python3 "$(SOURCE)/tests/check-upstream.py"
-	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppIbb TestXmppIbbTransfer TestXmppStreamInit TestXmppFileReceiver TestXmppFileSender TestXmppRegister TestXmppRosterPubSub TestXmppPresence TestXmppMuc TestXmppMucTracker; do \
+	cd "$(BUILD)" && for name in TestXmppStream TestXmppCore TestXmppClient TestXmppIQ TestXmppIbb TestXmppByteStreams TestXmppSocks5 TestXmppIbbTransfer TestXmppStreamInit TestXmppFileReceiver TestXmppFileSender TestXmppRegister TestXmppRosterPubSub TestXmppPresence TestXmppMuc TestXmppMucTracker; do \
 		$(VOC) $(OFLAGS) -m "$(SOURCE)/tests/$$name.Mod" && timeout 30 "./$$name" || exit; \
 	done
 history-test:

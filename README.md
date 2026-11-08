@@ -15,7 +15,8 @@ names. The makefile builds the current modules.
 
 Login, binding and a Unicode self-message round trip have been tested against a
 live server with a UTF-8 (Armenian language) account and domain. The original
-file transfers, scheduling and DIGEST-MD5 authentication still need porting.
+SOCKS5 file-transfer orchestration, scheduling and DIGEST-MD5 authentication
+still need porting. Negotiated IBB file sending and reception have local coverage.
 Roster retrieval/edits/pushes and PubSub/PEP publication, retrieval, retraction
 and notifications have offline and local TLS coverage.
 Presence construction/decoding and explicit-contact resource tracking have the
@@ -86,6 +87,8 @@ See [IBB transfers](doc/IBB.md) for consent, checked binary I/O and transfer cle
 See [file offers](doc/StreamInit.md) for transport selection and checked resume ranges.
 See [file reception](doc/FileReceiver.md) for asynchronous consent and negotiated IBB authorization.
 See [file sending](doc/FileSender.md) for offer/source binding and selected outgoing ranges.
+See [bytestream foundations](doc/ByteStreams.md) for host selection, destination
+hashes and incremental SOCKS5 client negotiation.
 
 [Barev for libpurple](https://github.com/norayr/barev-purple-oberon) uses the
 installed XML stream, item and UTF-8 serialization interfaces for direct peer
