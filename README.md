@@ -85,6 +85,7 @@ See [registration](doc/Registration.md) for account creation, changes and secret
 See [IBB transfers](doc/IBB.md) for consent, checked binary I/O and transfer cleanup.
 See [file offers](doc/StreamInit.md) for transport selection and checked resume ranges.
 See [file reception](doc/FileReceiver.md) for asynchronous consent and negotiated IBB authorization.
+See [file sending](doc/FileSender.md) for offer/source binding and selected outgoing ranges.
 
 [Barev for libpurple](https://github.com/norayr/barev-purple-oberon) uses the
 installed XML stream, item and UTF-8 serialization interfaces for direct peer
