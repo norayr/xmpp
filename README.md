@@ -88,7 +88,7 @@ See [file offers](doc/StreamInit.md) for transport selection and checked resume 
 See [file reception](doc/FileReceiver.md) for asynchronous consent and negotiated IBB authorization.
 See [file sending](doc/FileSender.md) for offer/source binding and selected outgoing ranges.
 See [bytestream foundations](doc/ByteStreams.md) for host selection, destination
-hashes and incremental SOCKS5 client negotiation.
+hashes and nonblocking Linux SOCKS5 client negotiation.
 
 [Barev for libpurple](https://github.com/norayr/barev-purple-oberon) uses the
 installed XML stream, item and UTF-8 serialization interfaces for direct peer
