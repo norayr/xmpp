@@ -83,6 +83,7 @@ See [multi-user chat](doc/MUC.md) for room stanzas, occupant decoding and limits
 See [room-state tracking](doc/MUCRooms.md) for confirmed joins, occupants and cleanup.
 See [registration](doc/Registration.md) for account creation, changes and secret handling.
 See [IBB transfers](doc/IBB.md) for consent, checked binary I/O and transfer cleanup.
+See [file offers](doc/StreamInit.md) for transport selection and checked resume ranges.
 
 [Barev for libpurple](https://github.com/norayr/barev-purple-oberon) uses the
 installed XML stream, item and UTF-8 serialization interfaces for direct peer
