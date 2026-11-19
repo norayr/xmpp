@@ -18,7 +18,9 @@ live server with a UTF-8 (Armenian language) account and domain. The original
 SOCKS5 file-transfer orchestration, scheduling and DIGEST-MD5 authentication
 still need porting. Negotiated IBB file sending and reception have local coverage.
 Roster retrieval/edits/pushes and PubSub/PEP publication, retrieval, retraction
-and notifications have offline and local TLS coverage.
+and notifications have offline and local TLS coverage. Explicit PubSub
+subscription/unsubscription helpers retain pending approval, configuration and
+subscription IDs with peer-checked offline regression coverage.
 Presence construction/decoding and explicit-contact resource tracking have the
 same local coverage; subscription approvals remain application decisions.
 IQ extensions use explicit registration and bounded request correlation.
