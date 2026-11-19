@@ -86,6 +86,23 @@ hg -R /path/to/xmpp-hg verify
 hg -R /path/to/xmpp-hg log
 ```
 
-Some original source headers refer to `Docu/BB-License`. No such file is present
-in the recovered changesets or supplied snapshot. The author notices are
-retained; licensing confirmation remains pending.
+## Author-supplied checkout
+
+The author-supplied checkout at Mercurial revision
+`61608fcd3235855d1db556a760e433254c8a6482` has 56 tracked files, all byte-identical
+to the corresponding revision already preserved in the recovered history. It
+precedes the 3 March 2015 `XmlStream` change. The later recovered source remains
+the basis of the port.
+
+The original BlackBox documents can be exported to UTF-8 plain text using
+[`odcread`](https://github.com/gertvv/odcread) with a UTF-8 locale. Preserve
+the `.odc` files alongside any exports: styled documents can contain folded
+text, Unicode characters and embedded objects that plain text cannot represent.
+
+## License
+
+Some original source headers refer to `Docu/BB-License`; that document is absent
+from the recovered changesets and supplied snapshot. The repository includes
+the [BSD 2-Clause License](../LICENSE), using the same terms as BlackBox
+Component Builder and retaining the XMPP authors' notices. The archived source
+documents and history bundles remain unchanged.

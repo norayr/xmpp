@@ -114,6 +114,11 @@ for the archived repository, conversion checks and original commit IDs.
 `a2cde5435bea63de16239c2c31e399ad0fd43ad2`: 88 files, including 31 paired
 `.txt`/`.odc` modules. Its manifest records sizes and SHA-256 hashes. The `.odc`
 documents retain Unicode text that was lost in some text exports. Original
-notices are retained. Some headers refer to `Docu/BB-License`, but that document
-is absent from the recovered history and supplied snapshot; licensing confirmation
-is still needed.
+notices are retained.
+
+## License
+
+The XMPP library and its VOC port use the [BSD 2-Clause License](LICENSE), the
+same license terms used by BlackBox Component Builder. Original author notices
+are retained, including historical references to `Docu/BB-License`. The preserved
+source snapshots remain unchanged.
