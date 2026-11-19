@@ -103,6 +103,8 @@ text, Unicode characters and embedded objects that plain text cannot represent.
 
 Some original source headers refer to `Docu/BB-License`; that document is absent
 from the recovered changesets and supplied snapshot. The repository includes
-the [BSD 2-Clause License](../LICENSE), using the same terms as BlackBox
-Component Builder and retaining the XMPP authors' notices. The archived source
-documents and history bundles remain unchanged.
+the [BSD 2-Clause License](../LICENSE-BSD-2-Clause) for the original component,
+using the same terms as BlackBox Component Builder. Norayr Chilingarian's VOC
+port and additions use LGPL-3.0-or-later; see [NOTICE](../NOTICE) and the
+[LGPL text](../LICENSE). Original author notices, archived documents and history
+bundles remain unchanged.
